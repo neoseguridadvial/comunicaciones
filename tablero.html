@@ -3,19 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neo Seguridad Vial - Repositorio de Comunicaciones</title>
-    <!-- Tailwind CSS para diseño corporativo limpio -->
+    <title>Laboratorio Creactivo - ¿Qué piensa el auditorio?</title>
+    <!-- Tailwind CSS para diseño corporativo ultra-vibrante -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- PapaParse para procesamiento CSV rápido -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <!-- Lucide Icons para simbología profesional -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js para gráficos interactivos e informes visuales -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@700;800&display=swap');
         
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #f8fafc; /* Fondo gris-azul muy suave y limpio */
+            background-color: #fffaf7; /* Fondo cálido muy sutil */
+        }
+        
+        .font-syne {
+            font-family: 'Syne', sans-serif;
         }
 
         /* Estilos corporativos para los botones de frases */
@@ -24,47 +30,54 @@
         }
         .phrase-item:hover {
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(30, 41, 59, 0.05);
+            box-shadow: 0 4px 12px rgba(234, 88, 12, 0.08);
+        }
+        
+        .tab-btn.active {
+            border-color: #ea580c;
+            color: #ea580c;
+            background-color: #fff7ed;
         }
     </style>
 </head>
 <body class="text-slate-800 min-h-screen flex flex-col relative overflow-x-hidden">
 
-    <!-- Notificaciones / Toast corporativo -->
+    <!-- Notificaciones / Toast vibrante -->
     <div id="toast" class="fixed top-4 right-4 z-50 transform translate-y-[-100px] opacity-0 transition-all duration-300 ease-out pointer-events-none">
-        <div class="bg-slate-900 text-white px-5 py-3.5 rounded-xl shadow-lg flex items-center gap-3 border border-slate-800">
-            <span id="toast-icon" class="text-amber-500">
-                <i data-lucide="info" class="w-5 h-5"></i>
+        <div class="bg-orange-950 text-white px-5 py-3.5 rounded-xl shadow-lg flex items-center gap-3 border border-orange-800">
+            <span id="toast-icon" class="text-orange-400">
+                <i data-lucide="sparkles" class="w-5 h-5"></i>
             </span>
             <p id="toast-message" class="text-xs font-semibold tracking-wide"></p>
         </div>
     </div>
 
-    <!-- Barra de Navegación Institucional (Neo Seguridad Vial) -->
-    <header class="border-b border-slate-200 bg-white sticky top-0 z-40 shadow-sm">
+    <!-- Barra de Navegación Institucional (Laboratorio Creactivo) -->
+    <header class="border-b border-orange-100 bg-white sticky top-0 z-40 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 
-                <!-- Logo y Título -->
+                <!-- Logo Oficial y Título -->
                 <div class="flex items-center gap-4">
                     <div class="flex items-center shrink-0">
-                        <img src="https://i.imgur.com/NAq8Hg3.png" alt="Neo Seguridad Vial" class="h-12 w-auto object-contain" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1590086782957-93c06ef21604?w=100';">
+                        <!-- Logo oficial provisto por el usuario -->
+                        <img src="https://i.imgur.com/NAq8Hg3.png" alt="Laboratorio Creactivo" class="h-14 w-auto object-contain" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1557804506-669a67965ba0?w=100';">
                     </div>
-                    <div class="border-l border-slate-200 pl-4 py-1">
-                        <h1 class="text-base font-extrabold tracking-tight text-slate-900">REPOSITORIO DE COMUNICACIONES</h1>
-                        <p class="text-[11px] text-slate-500 font-medium uppercase tracking-wider">Campaña de Prevención y Seguridad Vial</p>
+                    <div class="border-l border-orange-100 pl-4 py-1">
+                        <h1 class="text-base font-extrabold tracking-tight text-orange-950 font-syne">LABORATORIO CREACTIVO</h1>
+                        <p class="text-[11px] text-orange-600 font-bold uppercase tracking-wider">¿Qué piensa el auditorio?</p>
                     </div>
                 </div>
 
                 <!-- Estado del Canal y Botón de Sincronización -->
                 <div class="flex items-center gap-3 flex-wrap">
-                    <div class="text-[11px] bg-slate-50 text-slate-600 px-3 py-2 rounded-lg border border-slate-200 flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                        <span class="font-semibold" id="source-indicator">Estableciendo canal...</span>
+                    <div class="text-[11px] bg-orange-50 text-orange-800 px-3 py-2 rounded-lg border border-orange-200 flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></span>
+                        <span class="font-bold uppercase tracking-wider" id="source-indicator">Sincronizando canal...</span>
                     </div>
-                    <button onclick="fetchSheetData()" class="flex items-center gap-1.5 px-4 py-2 bg-slate-900 hover:bg-slate-800 active:bg-black text-white text-xs font-bold rounded-lg transition-all shadow-sm">
+                    <button onclick="fetchSheetData()" class="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-500 hover:to-amber-400 active:from-orange-700 text-white text-xs font-extrabold rounded-lg transition-all shadow-md shadow-orange-500/20">
                         <i data-lucide="refresh-cw" class="w-3.5 h-3.5" id="reload-icon"></i>
-                        Sincronizar Datos
+                        Sincronizar
                     </button>
                 </div>
 
@@ -76,23 +89,23 @@
     <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full space-y-6 relative z-10">
 
         <!-- Spinner de carga -->
-        <div id="loader" class="hidden bg-white/80 border border-slate-200 backdrop-blur-sm p-10 rounded-2xl flex flex-col items-center justify-center space-y-4 shadow-sm">
+        <div id="loader" class="hidden bg-white/80 border border-orange-150 backdrop-blur-sm p-10 rounded-2xl flex flex-col items-center justify-center space-y-4 shadow-sm">
             <div class="relative w-12 h-12">
-                <div class="absolute inset-0 border-4 border-slate-100 rounded-full"></div>
-                <div class="absolute inset-0 border-4 border-t-slate-800 rounded-full animate-spin"></div>
+                <div class="absolute inset-0 border-4 border-orange-100 rounded-full"></div>
+                <div class="absolute inset-0 border-4 border-t-orange-600 rounded-full animate-spin"></div>
             </div>
-            <p class="text-xs font-bold text-slate-600 uppercase tracking-widest">Extrayendo campañas de seguridad...</p>
+            <p class="text-xs font-bold text-orange-700 uppercase tracking-widest">Extrayendo respuestas del auditorio...</p>
         </div>
 
-        <!-- Panel de Configuración de Datos (Estilo Neo) -->
-        <section id="setup-panel" class="bg-white border border-slate-200 rounded-2xl p-6 relative overflow-hidden shadow-sm">
+        <!-- Panel de Configuración de Datos (Estilo Laboratorio Creactivo) -->
+        <section id="setup-panel" class="bg-white border border-orange-100 rounded-2xl p-6 relative overflow-hidden shadow-sm">
             <div class="space-y-4">
-                <div class="inline-flex items-center gap-2 px-3 py-1 bg-amber-50 text-amber-800 rounded-full border border-amber-200 text-[10px] font-bold uppercase tracking-wider">
-                    <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i> Gestión del Canal de Datos
+                <div class="inline-flex items-center gap-2 px-3 py-1 bg-orange-50 text-orange-800 rounded-full border border-orange-200 text-[10px] font-bold uppercase tracking-wider">
+                    <i data-lucide="mic-2" class="w-3.5 h-3.5"></i> Interacción y Co-creación
                 </div>
-                <h2 class="text-lg font-bold text-slate-900">Origen de Campañas de Comunicación</h2>
+                <h2 class="text-lg font-bold text-slate-900">Configuración del Origen del Laboratorio Creactivo</h2>
                 <p class="text-xs text-slate-600 leading-relaxed max-w-4xl">
-                    Esta herramienta procesa los datos en tiempo real de tu hoja de cálculo. Analiza la columna <strong class="text-slate-900">"Contenido Detallado"</strong> y extrae de forma automática las anclas y slogans clave de las campañas "Procedimiento" y "Andenes" para consolidarlos visualmente.
+                    Esta interfaz procesa en tiempo real los mensajes de tu auditorio. Extrae los slogans de la columna <strong class="text-orange-600">"Contenido Detallado"</strong> y desglosa de forma analítica el impacto comunicativo basado en su <span class="text-orange-600 font-semibold">Estrategia, Población, Problemática y Tono</span>.
                 </p>
 
                 <!-- URL del Google Sheet -->
@@ -101,16 +114,16 @@
                         <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
                             <i data-lucide="link" class="w-4 h-4"></i>
                         </span>
-                        <input type="url" id="sheet-url" class="block w-full pl-10 pr-4 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-800 text-slate-700 font-mono" value="https://docs.google.com/spreadsheets/d/e/2PACX-1vSTbEDeNHa2JzUXM8pua7NMsCioyAUqr8kgOkwEAh2d9qLoe_eDM1wGEYyae5lVTR507NCs8lJLLfRi/pub?output=csv">
+                        <input type="url" id="sheet-url" class="block w-full pl-10 pr-4 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 text-slate-700 font-mono" value="https://docs.google.com/spreadsheets/d/e/2PACX-1vSTbEDeNHa2JzUXM8pua7NMsCioyAUqr8kgOkwEAh2d9qLoe_eDM1wGEYyae5lVTR507NCs8lJLLfRi/pub?output=csv">
                     </div>
-                    <button onclick="fetchSheetData()" class="md:col-span-2 px-4 py-2.5 bg-slate-950 hover:bg-slate-900 text-white rounded-lg text-xs font-bold transition-colors shadow-sm">
-                        Conectar URL
+                    <button onclick="fetchSheetData()" class="md:col-span-2 px-4 py-2.5 bg-orange-600 hover:bg-orange-500 text-white rounded-lg text-xs font-bold transition-colors shadow-sm">
+                        Conectar Canal
                     </button>
                 </div>
 
                 <div class="flex flex-wrap gap-3 pt-1 text-xs">
-                    <button onclick="loadMockData()" class="text-slate-600 hover:text-slate-950 font-bold flex items-center gap-1.5 transition-colors">
-                        <i data-lucide="database" class="w-3.5 h-3.5 text-slate-400"></i> Cargar campaña oficial preestablecida
+                    <button onclick="loadMockData()" class="text-orange-600 hover:text-orange-800 font-bold flex items-center gap-1.5 transition-colors">
+                        <i data-lucide="database" class="w-3.5 h-3.5 text-orange-500"></i> Cargar campaña oficial preestablecida
                     </button>
                     <span class="text-slate-300">|</span>
                     <button onclick="toggleRawInput()" class="text-slate-500 hover:text-slate-800 font-semibold flex items-center gap-1.5 transition-colors">
@@ -119,10 +132,10 @@
                 </div>
 
                 <!-- Entrada manual en bruto (Oculta) -->
-                <div id="raw-input-container" class="hidden space-y-3 pt-4 border-t border-slate-100">
-                    <textarea id="raw-csv" rows="4" class="block w-full p-4 text-xs font-mono bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900/10 text-slate-700" placeholder="Autor,Propuesta,Categoria,Fecha,Contenido Detallado&#10;Idea Propia: Andenes,Andenes,Andenes,2026-06-02,Ancla: 📱 Mi Ancla\nSlogan: Mi Slogan"></textarea>
+                <div id="raw-input-container" class="hidden space-y-3 pt-4 border-t border-orange-100">
+                    <textarea id="raw-csv" rows="4" class="block w-full p-4 text-xs font-mono bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/10 text-slate-700" placeholder="Autor,Propuesta,Categoria,Fecha,Contenido Detallado,Tipo de Estrategia,Población Objetivo,Problemática,Tono&#10;Idea Propia: Andenes,Andenes,Andenes,2026-06-02,Ancla: 📱 Mi Ancla\nSlogan: Mi Slogan,Preventiva,Peatones,Uso de celular,Concientizador"></textarea>
                     <div class="flex justify-end">
-                        <button onclick="processRawCSV()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-lg transition-all shadow-sm">
+                        <button onclick="processRawCSV()" class="px-4 py-2 bg-orange-600 hover:bg-orange-500 text-white text-xs font-bold rounded-lg transition-all shadow-sm">
                             Procesar CSV
                         </button>
                     </div>
@@ -130,160 +143,291 @@
             </div>
         </section>
 
-        <!-- Bloque Principal de Filtros e Indicadores -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            
-            <!-- PANEL 1: Nube Consolidada de Slogans y Anclas -->
-            <section class="lg:col-span-8 bg-white border border-slate-200 rounded-2xl p-6 flex flex-col justify-between space-y-5 shadow-sm">
+        <!-- Selector de Pestañas (Vista Explorador vs Vista Analítica) -->
+        <div class="flex border-b border-orange-100 bg-white p-1 rounded-xl shadow-sm border border-orange-150 max-w-md">
+            <button onclick="switchTab('explorer')" id="tab-explorer" class="tab-btn active flex-1 py-2 text-xs font-bold rounded-lg text-slate-500 hover:text-orange-600 transition-all flex items-center justify-center gap-1.5">
+                <i data-lucide="grid" class="w-4 h-4"></i> Explorador de Mensajes
+            </button>
+            <button onclick="switchTab('analytics')" id="tab-analytics" class="tab-btn flex-1 py-2 text-xs font-bold rounded-lg text-slate-500 hover:text-orange-600 transition-all flex items-center justify-center gap-1.5">
+                <i data-lucide="bar-chart-3" class="w-4 h-4"></i> Analíticas & Reportes
+            </button>
+        </div>
+
+        <!-- SECCIÓN 1: VISTA EXPLORADOR (Nube e Ideas) -->
+        <div id="explorer-view-container" class="space-y-6">
+            <!-- Bloque Principal de Filtros e Indicadores -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div class="flex items-center gap-2.5">
-                        <div class="p-2 bg-slate-50 text-slate-700 rounded-xl border border-slate-200 shadow-sm">
-                            <i data-lucide="message-square" class="w-5 h-5"></i>
+                <!-- PANEL 1: Nube Consolidada de Slogans y Anclas -->
+                <section class="lg:col-span-8 bg-white border border-orange-100 rounded-2xl p-6 flex flex-col justify-between space-y-5 shadow-sm">
+                    
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div class="flex items-center gap-2.5">
+                            <div class="p-2 bg-orange-50 text-orange-600 rounded-xl border border-orange-100 shadow-sm">
+                                <i data-lucide="message-square" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-base font-bold text-orange-950 font-syne">Consolidación de Slogans</h2>
+                                <p class="text-[11px] text-slate-500">Selecciona y filtra de forma interactiva las propuestas de prevención vial.</p>
+                            </div>
                         </div>
-                        <div>
-                            <h2 class="text-base font-bold text-slate-950">Consolidación de Mensajes Clave</h2>
-                            <p class="text-[11px] text-slate-500">Selecciona y filtra de forma interactiva las propuestas de prevención vial.</p>
+                        
+                        <!-- Indicador de Filtro Activo de la Nube -->
+                        <div id="word-filter-indicator" class="hidden items-center gap-2 bg-orange-50 border border-orange-200 px-3 py-1.5 rounded-lg shadow-sm">
+                            <span class="text-[10px] text-orange-700 font-bold font-mono">Filtro Activo</span>
+                            <button onclick="clearCloudFilter()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                                <i data-lucide="x-circle" class="w-3.5 h-3.5"></i>
+                            </button>
                         </div>
                     </div>
-                    
-                    <!-- Indicador de Filtro Activo de la Nube -->
-                    <div id="word-filter-indicator" class="hidden items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg shadow-sm">
-                        <span class="text-[10px] text-slate-600 font-bold font-mono">Filtro de Selección Activo</span>
-                        <button onclick="clearCloudFilter()" class="text-slate-400 hover:text-slate-600 transition-colors">
-                            <i data-lucide="x-circle" class="w-3.5 h-3.5"></i>
+
+                    <!-- Selectores de Tipo de Mensajes -->
+                    <div class="flex gap-1.5 bg-orange-50 p-1 rounded-xl border border-orange-200 w-fit">
+                        <button id="view-slogans-btn" onclick="setCloudView('slogans')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white text-orange-600 shadow-sm border border-orange-100">
+                            Slogans Consolidados
+                        </button>
+                        <button id="view-anclas-btn" onclick="setCloudView('anclas')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-500 hover:text-orange-600">
+                            Anclas de Concepto
                         </button>
                     </div>
-                </div>
 
-                <!-- Selectores de Tipo de Mensajes -->
-                <div class="flex gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200/60 w-fit">
-                    <button id="view-slogans-btn" onclick="setCloudView('slogans')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white text-slate-900 shadow-sm">
-                        Slogans Consolidados
-                    </button>
-                    <button id="view-anclas-btn" onclick="setCloudView('anclas')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-500 hover:text-slate-800">
-                        Anclas de Concepto
-                    </button>
-                </div>
-
-                <!-- Contenedor de la Nube de Frases -->
-                <div class="relative bg-slate-50/50 rounded-xl border border-slate-200/80 min-h-[300px] p-5 flex flex-col items-stretch justify-center gap-2.5 overflow-hidden" id="word-cloud-box">
-                    <!-- Dinámico -->
-                </div>
-
-                <div class="flex items-center justify-between text-[11px] text-slate-400 border-t border-slate-100 pt-3">
-                    <span>Banco de Mensajes oficiales de Neo Seguridad Vial</span>
-                    <span class="flex items-center gap-1 text-slate-500"><i data-lucide="info" class="w-3.5 h-3.5 text-slate-400"></i> Haz clic en una frase para filtrar las tarjetas</span>
-                </div>
-            </section>
-
-            <!-- PANEL 2: Indicadores y Formulario de Nueva Propuesta -->
-            <section class="lg:col-span-4 flex flex-col gap-6">
-                
-                <!-- KPIs de Campaña -->
-                <div class="bg-white border border-slate-200 rounded-2xl p-5 space-y-4 shadow-sm">
-                    <div class="flex items-center gap-2">
-                        <i data-lucide="pie-chart" class="w-4 h-4 text-slate-600"></i>
-                        <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400">Métricas de Campaña</h3>
+                    <!-- Contenedor de la Nube de Frases -->
+                    <div class="relative bg-orange-50/20 rounded-xl border border-orange-100 min-h-[300px] p-5 flex flex-col items-stretch justify-center gap-2.5 overflow-hidden" id="word-cloud-box">
+                        <!-- Dinámico -->
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4">
-                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/60">
-                            <span class="text-[10px] text-slate-500 uppercase tracking-wider block font-semibold">Campañas</span>
-                            <span class="text-xl font-extrabold text-slate-900 mt-0.5 block" id="meta-total">0</span>
+                    <div class="flex items-center justify-between text-[11px] text-slate-400 border-t border-orange-100 pt-3">
+                        <span>Canal de asimilación auditiva e interna del auditorio</span>
+                        <span class="flex items-center gap-1 text-slate-500"><i data-lucide="info" class="w-3.5 h-3.5 text-orange-400"></i> Haz clic en una frase para aislar la campaña</span>
+                    </div>
+                </section>
+
+                <!-- PANEL 2: Indicadores y Formulario de Nueva Propuesta -->
+                <section class="lg:col-span-4 flex flex-col gap-6">
+                    
+                    <!-- KPIs de Campaña -->
+                    <div class="bg-white border border-orange-100 rounded-2xl p-5 space-y-4 shadow-sm">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="pie-chart" class="w-4 h-4 text-orange-600"></i>
+                            <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400">Métricas del Auditorio</h3>
                         </div>
-                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/60">
-                            <span class="text-[10px] text-slate-500 uppercase tracking-wider block font-semibold">Categorías</span>
-                            <span class="text-xl font-extrabold text-slate-900 mt-0.5 block" id="meta-concepts">0</span>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-orange-50/50 p-4 rounded-xl border border-orange-100">
+                                <span class="text-[10px] text-orange-600 uppercase tracking-wider block font-bold">Campañas</span>
+                                <span class="text-xl font-extrabold text-slate-900 mt-0.5 block" id="meta-total">0</span>
+                            </div>
+                            <div class="bg-orange-50/50 p-4 rounded-xl border border-orange-100">
+                                <span class="text-[10px] text-orange-600 uppercase tracking-wider block font-bold">Categorías</span>
+                                <span class="text-xl font-extrabold text-slate-900 mt-0.5 block" id="meta-concepts">0</span>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Agregar Propuesta Propia -->
-                <div class="bg-white border border-slate-200 rounded-2xl p-5 space-y-4 relative overflow-hidden shadow-sm">
-                    <div class="flex items-center gap-2">
-                        <i data-lucide="plus-circle" class="w-4.5 h-4.5 text-slate-700"></i>
-                        <h3 class="text-sm font-bold text-slate-900">Añadir Propuesta Nueva</h3>
-                    </div>
-                    <p class="text-xs text-slate-500 leading-relaxed">
-                        Integra una nueva propuesta al repositorio. Formatea el Contenido Detallado usando "Ancla:" y "Slogan:" para alimentar la nube de slogans de manera correcta.
-                    </p>
+                    <!-- Agregar Propuesta Propia -->
+                    <div class="bg-white border border-orange-100 rounded-2xl p-5 space-y-4 relative overflow-hidden shadow-sm">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="plus-circle" class="w-4.5 h-4.5 text-orange-600"></i>
+                            <h3 class="text-sm font-bold text-slate-900">Añadir Propuesta Nueva</h3>
+                        </div>
+                        <p class="text-xs text-slate-500 leading-relaxed">
+                            Integra una nueva propuesta al repositorio. Define detalladamente sus parámetros para que se consoliden en los gráficos dinámicos de forma automática.
+                        </p>
 
-                    <div class="space-y-2.5">
-                        <div>
-                            <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Nombre / Identificador</label>
-                            <input type="text" id="new-author" class="block w-full px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-400" placeholder="Ej. Idea Propia: Andenes">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Tema Principal</label>
-                            <input type="text" id="new-proposal" class="block w-full px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-400" placeholder="Ej. Campaña Peatones">
-                        </div>
-                        <div>
-                            <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Contenido Detallado Estructurado</label>
-                            <textarea id="new-detailed-content" rows="2" class="block w-full px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-400 font-mono text-[10px]" placeholder="Opción 1:&#10;Ancla: 📱 Mi Ancla&#10;Slogan: Mi Slogan"></textarea>
-                        </div>
-                        <div class="grid grid-cols-2 gap-2">
+                        <div class="space-y-2.5">
+                            <div>
+                                <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Nombre / Identificador</label>
+                                <input type="text" id="new-author" class="block w-full px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 focus:outline-none focus:ring-1 focus:ring-orange-400" placeholder="Ej. Idea Propia: Andenes">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Tema Principal</label>
+                                <input type="text" id="new-proposal" class="block w-full px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 focus:outline-none focus:ring-1 focus:ring-orange-400" placeholder="Ej. Campaña Peatones">
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Contenido Detallado Estructurado</label>
+                                <textarea id="new-detailed-content" rows="2" class="block w-full px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 focus:outline-none focus:ring-1 focus:ring-orange-400 font-mono text-[10px]" placeholder="Opción 1:&#10;Ancla: 📱 Mi Ancla&#10;Slogan: Mi Slogan"></textarea>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Estrategia</label>
+                                    <input type="text" id="new-strategy" class="block w-full px-3 py-1 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 text-xs" placeholder="Ej. Educativa">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Población Objetivo</label>
+                                    <input type="text" id="new-target" class="block w-full px-3 py-1 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 text-xs" placeholder="Ej. Peatones">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Problemática</label>
+                                    <input type="text" id="new-problem" class="block w-full px-3 py-1 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 text-xs" placeholder="Ej. Uso de audífonos">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Tono</label>
+                                    <input type="text" id="new-tone" class="block w-full px-3 py-1 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 text-xs" placeholder="Ej. Alerta">
+                                </div>
+                            </div>
                             <div>
                                 <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Categoría</label>
-                                <input type="text" id="new-category" class="block w-full px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-400" placeholder="Ej. Andenes">
+                                <input type="text" id="new-category" class="block w-full px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 focus:outline-none" placeholder="Ej. Andenes">
                             </div>
-                            <div class="flex items-end">
-                                <button onclick="addNewCustomProposal()" class="w-full py-1.5 bg-slate-900 hover:bg-slate-850 active:bg-black text-white text-xs font-bold rounded-lg transition-all shadow-sm flex items-center justify-center gap-1">
-                                    <i data-lucide="plus" class="w-3.5 h-3.5"></i> Integrar
-                                </button>
-                            </div>
+                            <button onclick="addNewCustomProposal()" class="w-full py-2 bg-gradient-to-r from-orange-600 to-amber-500 hover:from-orange-500 hover:to-amber-400 text-white text-xs font-bold rounded-lg transition-all shadow-md shadow-orange-500/10 flex items-center justify-center gap-1">
+                                <i data-lucide="plus" class="w-3.5 h-3.5"></i> Integrar al Auditorio
+                            </button>
                         </div>
                     </div>
+
+                </section>
+            </div>
+
+            <!-- Mosaico de Tarjetas de Comunicaciones -->
+            <section class="space-y-6">
+                
+                <!-- Barra de Búsqueda y Filtros de Campaña -->
+                <div class="bg-white border border-orange-100 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
+                    
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-3 flex-grow max-w-3xl">
+                        <div class="relative w-full sm:w-80">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                                <i data-lucide="search" class="w-4 h-4"></i>
+                            </span>
+                            <input type="text" id="search-input" oninput="handleSearch()" class="block w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500/10 text-xs text-slate-700 font-medium" placeholder="Buscar por concepto, slogan, detalle...">
+                        </div>
+
+                        <!-- Selector de Categoría -->
+                        <select id="category-filter" onchange="handleCategoryFilter()" class="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-500 font-bold focus:outline-none focus:ring-2 focus:ring-orange-500/10">
+                            <option value="">Todas las Categorías</option>
+                        </select>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <span class="text-xs font-semibold text-slate-500" id="results-counter">Campañas listadas: 0</span>
+                        <button onclick="resetAllFilters()" class="text-xs font-bold text-orange-600 hover:text-orange-800 flex items-center gap-1 transition-colors">
+                            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                            Limpiar Filtros
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- Grid de Campañas de Comunicación -->
+                <div id="ideas-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Se inyectan dinámicamente las tarjetas de campañas -->
                 </div>
 
             </section>
         </div>
 
-        <!-- Mosaico de Tarjetas de Comunicaciones -->
-        <section class="space-y-6">
+        <!-- SECCIÓN 2: VISTA ANALÍTICAS & REPORTES (Gráficos e informes) -->
+        <div id="analytics-view-container" class="hidden space-y-6">
             
-            <!-- Barra de Búsqueda y Filtros de Campaña -->
-            <div class="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
-                
-                <div class="flex flex-col sm:flex-row sm:items-center gap-3 flex-grow max-w-3xl">
-                    <div class="relative w-full sm:w-80">
-                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
-                            <i data-lucide="search" class="w-4 h-4"></i>
-                        </span>
-                        <input type="text" id="search-input" oninput="handleSearch()" class="block w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-950/10 text-xs text-slate-700 font-medium" placeholder="Buscar por concepto, slogan, detalle...">
+            <!-- Resumen Ejecutivo Automatizado por Campaña -->
+            <section class="bg-white border border-orange-100 rounded-2xl p-6 shadow-sm">
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="p-2 bg-orange-50 text-orange-600 border border-orange-100 rounded-xl">
+                        <i data-lucide="file-text" class="w-5 h-5"></i>
                     </div>
+                    <div>
+                        <h2 class="text-base font-bold text-slate-900 font-syne">Informe Analítico del Auditorio</h2>
+                        <p class="text-[11px] text-slate-500">Evaluación sintética de variables de estrategia, público, problemática y tono.</p>
+                    </div>
+                </div>
+                
+                <div class="bg-orange-50/10 border border-orange-100 p-5 rounded-xl">
+                    <p id="executive-summary-text" class="text-xs text-slate-700 leading-relaxed font-medium">
+                        Analizando parámetros de las propuestas en la base de datos...
+                    </p>
+                    <div class="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-orange-100 text-xs">
+                        <div class="space-y-1">
+                            <span class="text-slate-400 font-bold block uppercase text-[9px]">Largo de Slogan</span>
+                            <span id="stat-avg-words" class="text-base font-extrabold text-orange-650">0 palabras</span>
+                            <p class="text-[10px] text-slate-500">Ideal para retención rápida.</p>
+                        </div>
+                        <div class="space-y-1">
+                            <span class="text-slate-400 font-bold block uppercase text-[9px]">Estrategia Líder</span>
+                            <span id="stat-top-emoji" class="text-base font-extrabold text-orange-600">-</span>
+                            <p class="text-[10px] text-slate-500">Tipo de enfoque predominante.</p>
+                        </div>
+                        <div class="space-y-1">
+                            <span class="text-slate-400 font-bold block uppercase text-[9px]">Público Principal</span>
+                            <span id="stat-top-focus" class="text-base font-extrabold text-orange-600">-</span>
+                            <p class="text-[10px] text-slate-500">Población objetivo clave.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-                    <!-- Selector de Categoría -->
-                    <select id="category-filter" onchange="handleCategoryFilter()" class="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-500 font-bold focus:outline-none focus:ring-2 focus:ring-slate-950/10">
-                        <option value="">Todas las Categorías</option>
-                    </select>
+            <!-- Grid de Gráficos con Chart.js (Naranja Vibrante) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                <!-- Gráfico 1: Tipo de Estrategia -->
+                <div class="bg-white border border-orange-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="compass" class="w-4.5 h-4.5 text-orange-600"></i>
+                            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500">Tipo de Estrategia</h3>
+                        </div>
+                        <span class="text-[10px] text-slate-400 font-mono">Doughnut Chart</span>
+                    </div>
+                    <div class="relative h-[250px] flex items-center justify-center">
+                        <canvas id="strategyChart"></canvas>
+                    </div>
                 </div>
 
-                <div class="flex items-center gap-3">
-                    <span class="text-xs font-semibold text-slate-500" id="results-counter">Campañas listadas: 0</span>
-                    <button onclick="resetAllFilters()" class="text-xs font-bold text-slate-900 hover:text-slate-600 flex items-center gap-1 transition-colors">
-                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-                        Limpiar Filtros
-                    </button>
+                <!-- Gráfico 2: Población Objetivo -->
+                <div class="bg-white border border-orange-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="users" class="w-4.5 h-4.5 text-orange-600"></i>
+                            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500">Población Objetivo</h3>
+                        </div>
+                        <span class="text-[10px] text-slate-400 font-mono">Vertical Bar Chart</span>
+                    </div>
+                    <div class="relative h-[250px] flex items-center justify-center">
+                        <canvas id="targetChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Gráfico 3: Problemática Detectada -->
+                <div class="bg-white border border-orange-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="alert-triangle" class="w-4.5 h-4.5 text-orange-600"></i>
+                            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500">Problemática de Mayor Incidencia</h3>
+                        </div>
+                        <span class="text-[10px] text-slate-400 font-mono">Horizontal Bar Chart</span>
+                    </div>
+                    <div class="relative h-[250px] flex items-center justify-center">
+                        <canvas id="problemChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Gráfico 4: Tono de la Comunicación -->
+                <div class="bg-white border border-orange-100 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="volume-2" class="w-4.5 h-4.5 text-orange-600"></i>
+                            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500">Tono de Comunicación</h3>
+                        </div>
+                        <span class="text-[10px] text-slate-400 font-mono">Polar Area Chart</span>
+                    </div>
+                    <div class="relative h-[250px] flex items-center justify-center">
+                        <canvas id="toneChart"></canvas>
+                    </div>
                 </div>
 
             </div>
 
-            <!-- Grid de Campañas de Comunicación -->
-            <div id="ideas-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Se inyectan dinámicamente las tarjetas de campañas -->
-            </div>
-
-        </section>
+        </div>
 
     </main>
 
     <!-- Footer Corporativo -->
-    <footer class="border-t border-slate-200 bg-white text-slate-500 text-xs py-10 mt-16 relative z-10">
+    <footer class="border-t border-orange-100 bg-white text-slate-400 text-xs py-10 mt-16 relative z-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6 text-center md:text-left">
             <div class="space-y-1">
-                <p class="font-bold text-slate-800 tracking-wider">NEO SEGURIDAD VIAL // GESTIÓN DE COMUNICACIONES</p>
-                <p class="text-[11px] text-slate-500">Consolidación integral de slogans, anclas e iniciativas preventivas de seguridad vial.</p>
+                <p class="font-bold text-slate-800 tracking-wider font-syne">LABORATORIO CREACTIVO // ESTUDIO DE AUDIENCIA</p>
+                <p class="text-[11px] text-slate-500">Análisis interactivo de opinión, slogans, anclas e impacto de mensajes.</p>
             </div>
             <div class="flex justify-center md:justify-end gap-6 text-[10px] text-slate-400 font-mono font-semibold">
                 <span>CONEXIÓN CLOUD INTEGRADA</span>
@@ -300,12 +444,43 @@
         let activeCloudWord = "";     // Filtro por slogan de la nube
         let categories = new Set();   // Categorías únicas detectadas
         let cloudView = 'slogans';    // 'slogans' o 'anclas'
+        
+        // Instancias de Gráficos de Chart.js
+        let strategyChartInstance = null;
+        let targetChartInstance = null;
+        let problemChartInstance = null;
+        let toneChartInstance = null;
 
         // Inicializar interfaz
         window.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
             fetchSheetData(); // Intenta conectar de inicio
         });
+
+        // Alternar Pestañas del Sistema
+        function switchTab(tabId) {
+            const explorerBtn = document.getElementById('tab-explorer');
+            const analyticsBtn = document.getElementById('tab-analytics');
+            const explorerContainer = document.getElementById('explorer-view-container');
+            const analyticsContainer = document.getElementById('analytics-view-container');
+
+            if (tabId === 'explorer') {
+                explorerBtn.classList.add('active');
+                analyticsBtn.classList.remove('active');
+                explorerContainer.classList.remove('hidden');
+                analyticsContainer.classList.add('hidden');
+            } else {
+                analyticsBtn.classList.add('active');
+                explorerBtn.classList.remove('active');
+                explorerContainer.classList.add('hidden');
+                analyticsContainer.classList.remove('hidden');
+                
+                // Renderizar gráficos con Chart.js al abrir la pestaña de análisis
+                setTimeout(() => {
+                    generateAnalyticsReport();
+                }, 50);
+            }
+        }
 
         // Mostrar Toast corporativo
         function showToast(message, type = 'info') {
@@ -319,10 +494,10 @@
                 iconEl.className = "text-rose-600";
                 iconEl.innerHTML = '<i data-lucide="alert-circle" class="w-5 h-5"></i>';
             } else if (type === 'success') {
-                iconEl.className = "text-emerald-600";
+                iconEl.className = "text-orange-500";
                 iconEl.innerHTML = '<i data-lucide="sparkles" class="w-5 h-5"></i>';
             } else {
-                iconEl.className = "text-slate-800";
+                iconEl.className = "text-orange-700";
                 iconEl.innerHTML = '<i data-lucide="info" class="w-5 h-5"></i>';
             }
             
@@ -350,11 +525,11 @@
             const anclasBtn = document.getElementById('view-anclas-btn');
             
             if (view === 'slogans') {
-                slogansBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white text-slate-900 shadow-sm border border-slate-200";
-                anclasBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-500 hover:text-slate-800";
+                slogansBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white text-orange-600 shadow-sm border border-orange-200";
+                anclasBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-500 hover:text-orange-600";
             } else {
-                anclasBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white text-slate-900 shadow-sm border border-slate-200";
-                slogansBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-500 hover:text-slate-800";
+                anclasBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white text-orange-600 shadow-sm border border-orange-200";
+                slogansBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-500 hover:text-orange-600";
             }
             renderWordCloud();
         }
@@ -409,7 +584,7 @@
 
         // Cargar el set de datos oficial de Procedimiento y Andenes
         function loadMockData() {
-            const mockCSV = `Autor,Propuesta,Categoría,Fecha,Contenido Detallado
+            const mockCSV = `Autor,Propuesta,Categoría,Fecha,Contenido Detallado,Tipo de Estrategia,Población Objetivo,Problemática,Tono
 Idea Propia: Procedimiento,Procedimiento,Procedimiento,2026-06-02,"=== OPCIONES GENERADAS DE INSPIRACIÓN ===
 Opción 1:
 Ancla: ⏱️🔥 Baja la Aguja, Brilla la Vida 💡
@@ -421,7 +596,7 @@ Slogan: ""Monitorea hoy para evitar celular y distracción digital en ruta en tu
 
 Opción 3:
 Ancla: 👣🌟 Cruce Consciente, Paso Excelente 💡
-Slogan: ""Verifica hoy para evitar celular y distracción digital en ruta en tu jornada; recuerda que un hábito firme es tu mejor escudo protector."""
+Slogan: ""Verifica hoy para evitar celular y distracción digital en ruta en tu jornada; recuerda que un hábito firme es tu mejor escudo protector.""",Preventiva,Conductores,Distracción por celular,Concientizador
 Idea Propia: Andenes,Andenes,Andenes,2026-06-02,"=== OPCIONES GENERADAS DE INSPIRACIÓN ===
 Opción 1:
 Ancla: 📱🧠 Pantalla Apagada, Vida Conectada 💡
@@ -433,7 +608,7 @@ Slogan: ""Ama hoy para evitar celular y distracción digital en ruta en tu jorna
 
 Opción 3:
 Ancla: 👣🌟 Cruce Consciente, Paso Excelente 💡
-Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en tu jornada; recuerda que un segundo de descuido destruye un futuro."""`;
+Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en tu jornada; recuerda que un segundo de descuido destruye un futuro.""",Educativa,Peatones,Uso de celular,Alerta`;
 
             document.getElementById('raw-csv').value = mockCSV;
             parseAndProcessCSV(mockCSV);
@@ -498,7 +673,7 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
             return { anclas, slogans };
         }
 
-        // Normalizar los nombres de columnas
+        // Normalizar los nombres de columnas de la hoja
         function mapGenericFields(data) {
             return data.map((row, idx) => {
                 let Autor = row["Autor"] || row["autor"] || row["Nombre"] || row["nombre"] || row["Creador"] || "Idea Propia";
@@ -514,6 +689,12 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
                 let Categoria = row["Categoría"] || row["categoria"] || row["Categoría"] || row["Categoria"] || row["Tag"] || row["tag"] || "General";
                 let Fecha = row["Fecha"] || row["fecha"] || row["Date"] || row["date"] || "2026-06-02";
 
+                // Mapeo dinámico de nuevos campos solicitados por el usuario
+                let TipoEstrategia = row["Tipo de Estrategia"] || row["Tipo de estrategia"] || row["tipo_estrategia"] || row["Estrategia"] || (Categoria === "Procedimiento" ? "Preventiva" : "Educativa");
+                let PoblacionObjetivo = row["Población Objetivo"] || row["Población objetivo"] || row["poblacion_objetivo"] || row["Poblacion"] || (Categoria === "Procedimiento" ? "Conductores" : "Peatones");
+                let Problematica = row["Problemática"] || row["Problematica"] || row["problematica"] || (Categoria === "Procedimiento" ? "Distracción por celular" : "Uso de celular");
+                let Tono = row["Tono"] || row["tono"] || (Categoria === "Procedimiento" ? "Concientizador" : "Alerta");
+
                 return {
                     Id: idx + 1,
                     Autor,
@@ -522,7 +703,11 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
                     ExtractedAnclas: anclas,
                     ExtractedSlogans: slogans,
                     Categoria,
-                    Fecha
+                    Fecha,
+                    TipoEstrategia,
+                    PoblacionObjetivo,
+                    Problematica,
+                    Tono
                 };
             });
         }
@@ -550,7 +735,11 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
                     item.Autor.toLowerCase().includes(searchQuery) || 
                     item.Propuesta.toLowerCase().includes(searchQuery) || 
                     item.ContenidoDetallado.toLowerCase().includes(searchQuery) || 
-                    item.Categoria.toLowerCase().includes(searchQuery);
+                    item.Categoria.toLowerCase().includes(searchQuery) ||
+                    item.TipoEstrategia.toLowerCase().includes(searchQuery) ||
+                    item.PoblacionObjetivo.toLowerCase().includes(searchQuery) ||
+                    item.Problematica.toLowerCase().includes(searchQuery) ||
+                    item.Tono.toLowerCase().includes(searchQuery);
 
                 const matchesCategory = catFilter === "" || item.Categoria === catFilter;
 
@@ -570,6 +759,12 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
             renderIdeasGrid();
             renderWordCloud();
             updateMetaStats();
+
+            // Re-dibujar gráficos si la pestaña de análisis está activa
+            const analyticsContainer = document.getElementById('analytics-view-container');
+            if (analyticsContainer && !analyticsContainer.classList.contains('hidden')) {
+                generateAnalyticsReport();
+            }
         }
 
         // Generar Nube de Frases Completas
@@ -579,9 +774,9 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
 
             if (rawData.length === 0) {
                 cloudContainer.innerHTML = `
-                    <div class="text-center space-y-3 py-12 text-slate-400 w-full">
-                        <i data-lucide="cloud-lightning" class="w-12 h-12 mx-auto text-slate-400 animate-bounce"></i>
-                        <p class="text-sm font-semibold">Esperando contenido detallado para procesar...</p>
+                    <div class="text-center space-y-3 py-12 text-orange-400 w-full">
+                        <i data-lucide="cloud-lightning" class="w-12 h-12 mx-auto text-orange-400 animate-bounce"></i>
+                        <p class="text-sm font-semibold">Esperando respuestas para procesar...</p>
                         <p class="text-xs max-w-sm mx-auto">Asegúrate de que tus datos contengan la columna "Contenido Detallado".</p>
                     </div>
                 `;
@@ -605,7 +800,7 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
             if (uniquePhrases.length === 0) {
                 cloudContainer.innerHTML = `
                     <div class="text-center space-y-3 py-12 text-slate-400 w-full">
-                        <i data-lucide="cloud-lightning" class="w-12 h-12 mx-auto text-slate-400"></i>
+                        <i data-lucide="cloud-lightning" class="w-12 h-12 mx-auto text-orange-400"></i>
                         <p class="text-sm font-semibold">No se encontraron propuestas coincidentes</p>
                         <p class="text-xs max-w-sm mx-auto font-mono">Prueba cambiando la vista o limpiando filtros activos.</p>
                     </div>
@@ -614,22 +809,22 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
                 return;
             }
 
-            const neonBorderColors = [
-                'hover:border-slate-400 hover:bg-slate-50 text-slate-800 border-slate-200',
-                'hover:border-orange-400 hover:bg-orange-50/50 text-slate-800 border-slate-200',
-                'hover:border-blue-400 hover:bg-blue-50/50 text-slate-800 border-slate-200',
-                'hover:border-emerald-400 hover:bg-emerald-50/50 text-slate-800 border-slate-200'
+            const vibrantOrangeBorders = [
+                'hover:border-orange-500 hover:bg-orange-50 text-slate-800 border-orange-100',
+                'hover:border-amber-500 hover:bg-amber-50/50 text-slate-800 border-orange-100',
+                'hover:border-red-500 hover:bg-red-50/50 text-slate-800 border-orange-100',
+                'hover:border-yellow-500 hover:bg-yellow-50/50 text-slate-800 border-orange-100'
             ];
 
             uniquePhrases.forEach((phraseObj, index) => {
                 const phraseButton = document.createElement('button');
                 const isSelected = activeCloudWord === phraseObj.phrase;
-                const borderTheme = neonBorderColors[index % neonBorderColors.length];
+                const borderTheme = vibrantOrangeBorders[index % vibrantOrangeBorders.length];
 
                 phraseButton.className = `phrase-item w-full text-left p-3 rounded-xl border bg-white transition-all focus:outline-none flex items-start gap-3 shadow-sm`;
                 
                 if (isSelected) {
-                    phraseButton.className += ` border-slate-800 bg-slate-100 shadow-md scale-[1.01]`;
+                    phraseButton.className += ` border-orange-600 bg-orange-50 shadow-md scale-[1.01]`;
                 } else {
                     phraseButton.className += ` ${borderTheme}`;
                 }
@@ -637,13 +832,13 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
                 const icon = cloudView === 'slogans' ? 'quote' : 'anchor';
 
                 phraseButton.innerHTML = `
-                    <div class="p-1.5 rounded-lg bg-slate-50 text-slate-600 mt-0.5 shrink-0 border border-slate-200/50">
+                    <div class="p-1.5 rounded-lg bg-orange-50 text-orange-600 mt-0.5 shrink-0 border border-orange-100">
                         <i data-lucide="${icon}" class="w-3.5 h-3.5"></i>
                     </div>
                     <div class="space-y-0.5 flex-1 min-w-0">
-                        <p class="text-xs font-semibold leading-relaxed break-words">${phraseObj.phrase}</p>
+                        <p class="text-xs font-semibold leading-relaxed break-words text-slate-800">${phraseObj.phrase}</p>
                     </div>
-                    <span class="text-[9px] font-bold bg-slate-100 text-slate-500 border border-slate-200 px-1.5 py-0.5 rounded-full font-mono shrink-0">${phraseObj.count}</span>
+                    <span class="text-[9px] font-bold bg-orange-100 text-orange-700 border border-orange-200 px-1.5 py-0.5 rounded-full font-mono shrink-0">${phraseObj.count}</span>
                 `;
 
                 phraseButton.onclick = () => {
@@ -686,11 +881,11 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
 
             if (filteredData.length === 0) {
                 grid.innerHTML = `
-                    <div class="col-span-full bg-white border border-slate-200 rounded-2xl p-12 text-center space-y-4 shadow-sm">
-                        <i data-lucide="folder-search" class="w-12 h-12 mx-auto text-slate-300"></i>
+                    <div class="col-span-full bg-white border border-orange-100 rounded-2xl p-12 text-center space-y-4 shadow-sm w-full">
+                        <i data-lucide="folder-search" class="w-12 h-12 mx-auto text-orange-200"></i>
                         <h3 class="font-bold text-slate-900">No hay propuestas coincidentes</h3>
                         <p class="text-xs text-slate-500 max-w-sm mx-auto">Revisa los filtros activos o realiza otra búsqueda.</p>
-                        <button onclick="resetAllFilters()" class="px-4 py-2 bg-slate-900 hover:bg-slate-850 text-white text-xs font-bold rounded-lg transition-all shadow-sm">Mostrar Todo</button>
+                        <button onclick="resetAllFilters()" class="px-4 py-2 bg-orange-600 hover:bg-orange-500 text-white text-xs font-bold rounded-lg transition-all shadow-sm">Mostrar Todo</button>
                     </div>
                 `;
                 lucide.createIcons();
@@ -699,7 +894,7 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
 
             filteredData.forEach(item => {
                 const card = document.createElement('div');
-                card.className = "bg-white border border-slate-200 hover:border-slate-400 rounded-2xl p-6 transition-all duration-300 hover:shadow-md flex flex-col justify-between group relative overflow-hidden shadow-sm";
+                card.className = "bg-white border border-orange-100 hover:border-orange-400 rounded-2xl p-6 transition-all duration-300 hover:shadow-md flex flex-col justify-between group relative overflow-hidden shadow-sm";
                 
                 // Mapeo dinámico de badges de impacto
                 const complexity = item.ContenidoDetallado.length;
@@ -708,13 +903,13 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
                 
                 if (complexity > 120) {
                     impactBadge = "Alta Prioridad";
-                    badgeColor = "bg-orange-50 text-orange-700 border-orange-200";
+                    badgeColor = "bg-red-50 text-red-700 border-red-200";
                 } else if (complexity > 70) {
                     impactBadge = "Campaña Activa";
-                    badgeColor = "bg-blue-50 text-blue-700 border-blue-200";
+                    badgeColor = "bg-orange-50 text-orange-700 border-orange-200";
                 } else if (complexity > 30) {
                     impactBadge = "General";
-                    badgeColor = "bg-emerald-50 text-emerald-700 border-emerald-200";
+                    badgeColor = "bg-amber-50 text-amber-700 border-amber-200";
                 }
 
                 const categoryColor = getCategoryStyling(item.Categoria);
@@ -722,10 +917,10 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
                 const optionsHtml = item.ExtractedSlogans.map((slogan, sIdx) => {
                     const matchedAncla = item.ExtractedAnclas[sIdx] || "";
                     return `
-                        <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2 phrase-item">
-                            <div class="flex items-center gap-1.5 text-[10px] font-bold text-slate-900 uppercase">
-                                <span class="bg-slate-200 px-1.5 py-0.5 rounded text-slate-700">Opción ${sIdx + 1}</span>
-                                ${matchedAncla ? `<span class="text-slate-500 font-semibold truncate">| ${matchedAncla}</span>` : ''}
+                        <div class="p-3.5 bg-orange-50/20 rounded-xl border border-orange-100 space-y-2 phrase-item">
+                            <div class="flex items-center gap-1.5 text-[10px] font-bold text-orange-950 uppercase">
+                                <span class="bg-orange-100 px-1.5 py-0.5 rounded text-orange-700">Opción ${sIdx + 1}</span>
+                                ${matchedAncla ? `<span class="text-orange-600 font-semibold truncate">| ${matchedAncla}</span>` : ''}
                             </div>
                             <p class="text-xs text-slate-700 leading-relaxed font-medium">"${slogan}"</p>
                         </div>
@@ -746,12 +941,20 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
                                 ${optionsHtml}
                             </div>
                         </div>
+
+                        <!-- Variables de Co-creación -->
+                        <div class="grid grid-cols-2 gap-2 text-[10px] bg-orange-50/30 p-2.5 rounded-lg border border-orange-100/50 mt-2">
+                            <div><span class="text-slate-400 block font-bold">Estrategia</span> <span class="text-slate-700 font-semibold">${item.TipoEstrategia}</span></div>
+                            <div><span class="text-slate-400 block font-bold">Público</span> <span class="text-slate-700 font-semibold">${item.PoblacionObjetivo}</span></div>
+                            <div><span class="text-slate-400 block font-bold">Problemática</span> <span class="text-slate-700 font-semibold">${item.Problematica}</span></div>
+                            <div><span class="text-slate-400 block font-bold">Tono</span> <span class="text-slate-700 font-semibold">${item.Tono}</span></div>
+                        </div>
                     </div>
 
                     <!-- Pie de Tarjeta -->
                     <div class="border-t border-slate-100 pt-4 mt-6 flex items-center justify-between relative z-10">
                         <div class="flex items-center gap-2">
-                            <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center border border-slate-200 font-bold text-[10px] text-slate-700 uppercase">
+                            <div class="w-8 h-8 rounded-lg bg-orange-50 flex items-center justify-center border border-orange-100 font-bold text-[10px] text-orange-600 uppercase">
                                 ${item.Autor.substring(0, 2)}
                             </div>
                             <div>
@@ -760,7 +963,7 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
                             </div>
                         </div>
 
-                        <button onclick="copyProposalToClipboard(${item.Id})" class="p-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors" title="Copiar todas las opciones">
+                        <button onclick="copyProposalToClipboard(${item.Id})" class="p-2 bg-orange-50 border border-orange-100 rounded-lg text-orange-600 hover:text-white hover:bg-orange-600 transition-colors" title="Copiar todas las opciones">
                             <i data-lucide="copy" class="w-3.5 h-3.5"></i>
                         </button>
                     </div>
@@ -776,9 +979,9 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
         function getCategoryStyling(cat) {
             const str = cat.toLowerCase();
             if (str.includes('proce')) {
-                return 'bg-amber-50 text-amber-800 border-amber-200';
+                return 'bg-amber-100 text-amber-800 border-amber-200';
             } else if (str.includes('andene')) {
-                return 'bg-cyan-50 text-cyan-800 border-cyan-200';
+                return 'bg-orange-100 text-orange-800 border-orange-200';
             }
             return 'bg-slate-100 text-slate-700 border-slate-200';
         }
@@ -790,8 +993,14 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
             const detailedContent = document.getElementById('new-detailed-content').value.trim();
             const category = document.getElementById('new-category').value.trim();
 
+            // Parámetros analíticos adicionales
+            const strategy = document.getElementById('new-strategy').value.trim() || "Informativa";
+            const target = document.getElementById('new-target').value.trim() || "Público General";
+            const problem = document.getElementById('new-problem').value.trim() || "Seguridad";
+            const tone = document.getElementById('new-tone').value.trim() || "Informativo";
+
             if (!author || !proposal || !detailedContent || !category) {
-                showToast("Por favor completa los cuatro campos del formulario", "error");
+                showToast("Por favor completa los campos del formulario", "error");
                 return;
             }
 
@@ -806,7 +1015,11 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
                 ExtractedAnclas: anclas,
                 ExtractedSlogans: slogans,
                 Categoria: category,
-                Fecha: today
+                Fecha: today,
+                TipoEstrategia: strategy,
+                PoblacionObjetivo: target,
+                Problematica: problem,
+                Tono: tone
             };
 
             rawData.unshift(newIdea);
@@ -819,8 +1032,12 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
             document.getElementById('new-proposal').value = '';
             document.getElementById('new-detailed-content').value = '';
             document.getElementById('new-category').value = '';
+            document.getElementById('new-strategy').value = '';
+            document.getElementById('new-target').value = '';
+            document.getElementById('new-problem').value = '';
+            document.getElementById('new-tone').value = '';
 
-            showToast("Mensaje de seguridad integrado con éxito", "success");
+            showToast("Mensaje integrado al auditorio con éxito", "success");
         }
 
         // KPIs
@@ -844,7 +1061,7 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
             activeCloudWord = "";
             document.getElementById('word-filter-indicator').classList.add('hidden');
             applyFilters();
-            showToast("Filtros del repositorio restablecidos", "info");
+            showToast("Filtros del laboratorio restablecidos", "info");
         }
 
         // Copiar slogans consolidado al portapapeles
@@ -865,6 +1082,195 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
                 showToast("No se pudo copiar el contenido", "error");
             }
             document.body.removeChild(textarea);
+        }
+
+        // GENERACIÓN DE REPORTES GRÁFICOS Y RESÚMENES (Chart.js)
+        function generateAnalyticsReport() {
+            if (filteredData.length === 0) return;
+
+            // 1. COMPONER EL INFORME Y KPIs DINÁMICOS
+            let totalWords = 0;
+            let sloganCount = 0;
+            const strategyCounts = {};
+            const targetCounts = {};
+            const problemCounts = {};
+            const toneCounts = {};
+
+            filteredData.forEach(item => {
+                strategyCounts[item.TipoEstrategia] = (strategyCounts[item.TipoEstrategia] || 0) + 1;
+                targetCounts[item.PoblacionObjetivo] = (targetCounts[item.PoblacionObjetivo] || 0) + 1;
+                problemCounts[item.Problematica] = (problemCounts[item.Problematica] || 0) + 1;
+                toneCounts[item.Tono] = (toneCounts[item.Tono] || 0) + 1;
+                
+                item.ExtractedSlogans.forEach(slogan => {
+                    const words = slogan.split(/\s+/).filter(w => w.length > 0);
+                    totalWords += words.length;
+                    sloganCount++;
+                });
+            });
+
+            // Promedio de palabras por slogan
+            const avgWords = sloganCount > 0 ? Math.round(totalWords / sloganCount) : 0;
+            document.getElementById('stat-avg-words').textContent = `${avgWords} palabras`;
+
+            // Encontrar la estrategia predominante
+            let topStrategy = 'Informativa';
+            let maxStrategyCount = 0;
+            Object.entries(strategyCounts).forEach(([strat, count]) => {
+                if (count > maxStrategyCount) {
+                    maxStrategyCount = count;
+                    topStrategy = strat;
+                }
+            });
+            document.getElementById('stat-top-emoji').textContent = topStrategy;
+
+            // Encontrar el público objetivo predominante
+            let topTarget = 'No asignado';
+            let maxTargetCount = 0;
+            Object.entries(targetCounts).forEach(([tgt, count]) => {
+                if (count > maxTargetCount) {
+                    maxTargetCount = count;
+                    topTarget = tgt;
+                }
+            });
+            document.getElementById('stat-top-focus').textContent = topTarget;
+
+            // Encontrar tono líder
+            let topTone = 'Asertivo';
+            let maxToneCount = 0;
+            Object.entries(toneCounts).forEach(([t, count]) => {
+                if (count > maxToneCount) {
+                    maxToneCount = count;
+                    topTone = t;
+                }
+            });
+
+            // Encontrar problemática líder
+            let topProblem = 'Seguridad';
+            let maxProblemCount = 0;
+            Object.entries(problemCounts).forEach(([p, count]) => {
+                if (count > maxProblemCount) {
+                    maxProblemCount = count;
+                    topProblem = p;
+                }
+            });
+
+            // Redactar texto dinámico del resumen ejecutivo
+            const summaryBox = document.getElementById('executive-summary-text');
+            const totalSlogans = sloganCount;
+
+            summaryBox.innerHTML = `
+                El <strong>Laboratorio Creactivo</strong> registra un total de <strong>${filteredData.length} campañas</strong> que consolidan <strong>${totalSlogans} slogans activos</strong> de respuesta en el auditorio. 
+                La problemática clave a mitigar es <span class="text-orange-600 font-bold">"${topProblem}"</span>, empleando un tono de comunicación predominantemente <span class="text-orange-600 font-bold">"${topTone}"</span>. 
+                La principal estrategia aplicada es de tipo <strong>"${topStrategy}"</strong> dirigida específicamente a un público de <strong>"${topTarget}"</strong>. 
+                Los slogans registran un largo medio de <strong>${avgWords} palabras</strong>, logrando un balance ideal entre asimilación y recordación ágil.
+            `;
+
+            // Paleta de colores naranjas muy vibrantes
+            const vibrantOrangePalette = ['#ff5100', '#ff781f', '#f97316', '#fb923c', '#fdba74', '#c2410c', '#ea580c'];
+
+            // Gráfico 1: Tipo de Estrategia
+            if (strategyChartInstance) strategyChartInstance.destroy();
+            const ctx1 = document.getElementById('strategyChart').getContext('2d');
+            strategyChartInstance = new Chart(ctx1, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(strategyCounts),
+                    datasets: [{
+                        data: Object.values(strategyCounts),
+                        backgroundColor: vibrantOrangePalette.slice(0, Object.keys(strategyCounts).length),
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { font: { family: 'Plus Jakarta Sans', size: 10, weight: 'bold' }, color: '#475569' }
+                        }
+                    }
+                }
+            });
+
+            // Gráfico 2: Población Objetivo
+            if (targetChartInstance) targetChartInstance.destroy();
+            const ctx2 = document.getElementById('targetChart').getContext('2d');
+            targetChartInstance = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(targetCounts),
+                    datasets: [{
+                        label: 'Número de Campañas',
+                        data: Object.values(targetCounts),
+                        backgroundColor: '#ff5100',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { color: '#64748b', font: { family: 'Plus Jakarta Sans', size: 10, weight: 'bold' } } },
+                        y: { grid: { color: '#f1f5f9' }, ticks: { color: '#64748b', font: { family: 'Plus Jakarta Sans', size: 9 } } }
+                    }
+                }
+            });
+
+            // Gráfico 3: Problemática Detectada
+            if (problemChartInstance) problemChartInstance.destroy();
+            const ctx3 = document.getElementById('problemChart').getContext('2d');
+            problemChartInstance = new Chart(ctx3, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(problemCounts),
+                    datasets: [{
+                        label: 'Incidencias',
+                        data: Object.values(problemCounts),
+                        backgroundColor: '#f97316',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { color: '#64748b', font: { family: 'Plus Jakarta Sans', size: 9 } } },
+                        y: { grid: { display: false }, ticks: { color: '#1e293b', font: { family: 'Plus Jakarta Sans', size: 9, weight: 'bold' } } }
+                    }
+                }
+            });
+
+            // Gráfico 4: Tono de la Comunicación
+            if (toneChartInstance) toneChartInstance.destroy();
+            const ctx4 = document.getElementById('toneChart').getContext('2d');
+            toneChartInstance = new Chart(ctx4, {
+                type: 'polarArea',
+                data: {
+                    labels: Object.keys(toneCounts),
+                    datasets: [{
+                        data: Object.values(toneCounts),
+                        backgroundColor: vibrantOrangePalette.slice(1, Object.keys(toneCounts).length + 1),
+                        borderWidth: 1.5,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { font: { family: 'Plus Jakarta Sans', size: 10, weight: 'bold' }, color: '#475569' }
+                        }
+                    }
+                }
+            });
         }
     </script>
 </body>
