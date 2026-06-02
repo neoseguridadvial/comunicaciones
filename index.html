@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratorio Creativo - Creador Científico de Enganche</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter y Plus Jakarta Sans para dar un aspecto premium -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome para iconos divertidos y profesionales -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        title: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            lightBg: '#F8FAFC',
+                            card: '#FFFFFF',
+                            orange: '#F97316',
+                            orangeDark: '#EA580C',
+                            orangeLight: '#FFEDD5',
+                            blue: '#2563EB',
+                            blueDark: '#1D4ED8',
+                            blueLight: '#DBEAFE',
+                            darkText: '#0F172A',
+                            mutedText: '#475569',
+                            emerald: '#10B981',
+                            clayYellow: '#FCD34D',
+                            clayRed: '#EF4444',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #F8FAFC;
+            color: #0F172A;
+        }
+        
+        /* Estilos estilo "Plastilina / Stop-Motion" */
+        .clay-style {
+            border: 4px solid #0F172A;
+            box-shadow: 5px 5px 0px #0F172A;
+            border-radius: 24px;
+            background: #FFFFFF;
+            transition: all 0.15s ease-in-out;
+        }
+        
+        .clay-style:active {
+            transform: translate(3px, 3px);
+            box-shadow: 2px 2px 0px #0F172A;
+        }
+
+        .clay-btn-orange {
+            background: #F97316;
+            color: white;
+            border: 3px solid #0F172A;
+            box-shadow: 4px 4px 0px #0F172A;
+        }
+
+        .clay-btn-orange:hover {
+            background: #EA580C;
+        }
+
+        .clay-btn-orange:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #0F172A;
+        }
+
+        /* Simulación de animación Stop-Motion (baja tasa de cuadros / Wobble físico) */
+        @keyframes stopmotion-jitter {
+            0%, 100% { transform: rotate(-0.5deg) scale(1); }
+            25% { transform: rotate(0.8deg) scale(0.995); }
+            50% { transform: rotate(-0.8deg) scale(1.005); }
+            75% { transform: rotate(0.5deg) scale(0.99); }
+        }
+
+        .stopmotion-animate {
+            animation: stopmotion-jitter 0.8s steps(4) infinite;
+        }
+
+        .stopmotion-animate-slow {
+            animation: stopmotion-jitter 1.5s steps(3) infinite;
+        }
+
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #F1F5F9;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col font-sans selection:bg-brand-orange selection:text-white">
+
+    <!-- Header / Navbar -->
+    <header class="border-b-4 border-brand-darkText bg-white sticky top-0 z-40 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="transform rotate-[-2deg] stopmotion-animate-slow">
+                    <!-- Usamos el enlace directo .png de Imgur para asegurar que renderice en HTML -->
+                    <img src="https://i.imgur.com/NAq8Hg3.png" alt="ANSV Logo" class="h-8 md:h-10 object-contain">
+                </div>
+                <div>
+                    <span class="font-title font-extrabold tracking-wider text-xl text-brand-darkText">Laboratorio <span class="bg-gradient-to-r from-brand-orange to-brand-blue bg-clip-text text-transparent">Creativo</span></span>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-2">
+                <span id="syncBadge" class="text-[11px] bg-red-100 text-red-800 py-1 px-3 rounded-full border-2 border-brand-darkText font-bold hidden sm:inline-block transition-colors duration-300">
+                    🔴 Resultados No Sincronizados
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main App Container -->
+    <main class="flex-grow max-w-4xl w-full mx-auto px-4 py-6 md:py-8 flex flex-col gap-6">
+        
+        <!-- Tab Navigation Bar -->
+        <div class="bg-slate-100 border-3 border-brand-darkText p-1.5 rounded-2xl grid grid-cols-2 md:grid-cols-3 w-full gap-1.5 shadow-[4px_4px_0px_#0f172a]">
+            <button id="tab-config" onclick="switchTab('config')" class="flex-1 py-3 px-2 rounded-xl text-xs sm:text-sm font-black transition-all duration-300 flex items-center justify-center gap-1.5 bg-brand-orange text-white border-2 border-brand-darkText shadow-[2px_2px_0px_#0f172a]">
+                <i class="fa-solid fa-sliders"></i>
+                <span class="truncate">1. Diseñar</span>
+            </button>
+            <button id="tab-results" onclick="switchTab('results')" class="flex-1 py-3 px-2 rounded-xl text-xs sm:text-sm font-black transition-all duration-300 flex items-center justify-center gap-1.5 text-brand-mutedText hover:text-brand-darkText border-2 border-transparent">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <span class="truncate">2. Estrategias</span>
+                <span id="resultsCountBadge" class="hidden text-[10px] bg-brand-blue text-white px-1.5 py-0.5 rounded-full border border-brand-darkText">3</span>
+            </button>
+            <button id="tab-clay" onclick="switchTab('clay')" class="flex-1 py-3 px-2 rounded-xl text-xs sm:text-sm font-black transition-all duration-300 flex items-center justify-center gap-1.5 text-brand-mutedText hover:text-brand-darkText border-2 border-transparent">
+                <i class="fa-solid fa-palette"></i>
+                <span class="truncate">Plastilina</span>
+            </button>
+        </div>
+
+        <!-- VIEW 1: CONFIGURATION FORM -->
+        <section id="view-config" class="space-y-6 block">
+            <div class="text-center md:text-left max-w-2xl mx-auto md:mx-0">
+                <h1 class="font-title text-3xl md:text-4xl font-extrabold tracking-tight text-brand-darkText leading-tight">
+                    Crea Campañas Científicas de <span class="underline decoration-brand-orange decoration-4">Impacto Inmediato</span>
+                </h1>
+                <p class="text-brand-mutedText text-sm md:text-base mt-2">
+                    Combina ingeniería de <strong>Sistema Seguro</strong>, sesgos cognitivos de <strong>Ciencias del Comportamiento</strong> y enganche sensorial de <strong>Neuromarketing</strong> en propuestas accionables.
+                </p>
+            </div>
+
+            <!-- Card Principal del Formulario -->
+            <div class="bg-white border-4 border-brand-darkText rounded-3xl p-5 md:p-8 shadow-[6px_6px_0px_#0f172a] relative overflow-hidden">
+                <form id="strategyForm" onsubmit="event.preventDefault(); processForm();" class="space-y-6">
+                    
+                    <!-- 1. Population Selection -->
+                    <div>
+                        <label class="block text-sm font-black text-brand-darkText mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-users text-brand-blue text-lg"></i> 1. Población Objetivo (¿A quién va dirigido?)
+                        </label>
+                        <select id="population" onchange="toggleCustomInput('population')" class="w-full bg-white border-3 border-brand-darkText rounded-xl px-4 py-3.5 text-sm text-brand-darkText font-bold focus:outline-none focus:ring-2 focus:ring-brand-orange focus:border-transparent transition-all cursor-pointer">
+                            <option value="Conductores Jóvenes (18-25 años)">Conductores Jóvenes (18-25 años)</option>
+                            <option value="Operarios Industriales y Logísticos">Operarios Industriales y Logísticos</option>
+                            <option value="Peatones Urbanos y Escolares">Peatones Urbanos y Escolares</option>
+                            <option value="Personal de Oficina y Mandos Medios">Personal de Oficina y Mandos Medios</option>
+                            <option value="Repartidores y Motociclistas">Repartidores y Motociclistas</option>
+                            <option value="Ciclistas y Usuarios de Micro-movilidad">Ciclistas y Usuarios de Micro-movilidad</option>
+                            <option value="Conductores de Carga Pesada y Buses">Conductores de Carga Pesada y Buses</option>
+                            <option value="Adultos Mayores o de Movilidad Reducida">Adultos Mayores o de Movilidad Reducida</option>
+                            <option value="Personal de Salud y Emergencias">Personal de Salud y Emergencias</option>
+                            <option value="Conductores de Plataformas de Viaje (Uber, DiDi)">Conductores de Plataformas de Viaje (Uber/DiDi)</option>
+                            <option value="Trabajadores de Construcción y Vías Públicas">Trabajadores de Construcción y Vías Públicas</option>
+                            <option value="custom">Otro (Escribir población personalizada...)</option>
+                        </select>
+                        
+                        <div id="custom-population-container" class="mt-3 hidden transition-all duration-300">
+                            <input type="text" id="custom-population" placeholder="Ej: Operadores de grúas torre de alta montaña" class="w-full bg-white border-3 border-brand-orange rounded-xl px-4 py-3 text-sm text-brand-darkText font-semibold placeholder-slate-400 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <!-- 2. Problem Selection -->
+                    <div>
+                        <label class="block text-sm font-black text-brand-darkText mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation text-brand-orange text-lg"></i> 2. Problemática / Riesgo Crítico a Mitigar
+                        </label>
+                        <select id="problem" onchange="toggleCustomInput('problem')" class="w-full bg-white border-3 border-brand-darkText rounded-xl px-4 py-3.5 text-sm text-brand-darkText font-bold focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent transition-all cursor-pointer">
+                            <option value="el uso de celular y distracción digital en ruta">Uso de celular o distracción digital en ruta</option>
+                            <option value="el exceso de velocidad y el apuro rutinario">Exceso de velocidad / Apuro rutinario</option>
+                            <option value="la omisión de Elementos de Protección Personal (EPP)">Omisión de Elementos de Protección Personal (EPP)</option>
+                            <option value="la fatiga, el estrés laboral y la falta de pausas">Fatiga, estrés laboral y falta de pausas activas</option>
+                            <option value="los cruces y giros imprudentes ignorando señalética">Cruces e intersecciones ignorando señalética</option>
+                            <option value="el consumo de alcohol o sustancias estupefacientes">Consumo de alcohol o sustancias de riesgo</option>
+                            <option value="el incumplimiento de las distancias de seguridad">Incumplimiento de distancia de seguridad (Tailgating)</option>
+                            <option value="la distracción por ruido o desorden ambiental">Distracciones en el entorno de trabajo (ruido/desorden)</option>
+                            <option value="no reportar incidentes o condiciones inseguras">No reportar incidentes o condiciones de peligro</option>
+                            <option value="exposición a puntos ciegos de vehículos grandes">Exposición a puntos ciegos de vehículos grandes</option>
+                            <option value="custom">Otro (Escribir problemática personalizada...)</option>
+                        </select>
+
+                        <div id="custom-problem-container" class="mt-3 hidden transition-all duration-300">
+                            <input type="text" id="custom-problem" placeholder="Ej: No realizar la inspección previa del vehículo de carga" class="w-full bg-white border-3 border-brand-blue rounded-xl px-4 py-3 text-sm text-brand-darkText font-semibold placeholder-slate-400 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <!-- 3. Tone Configuration -->
+                    <div>
+                        <label class="block text-sm font-black text-brand-darkText mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-comments text-slate-700 text-lg"></i> 3. Tono de Comunicación Sugerido
+                        </label>
+                        <div class="grid grid-cols-3 gap-2 md:gap-4">
+                            <button type="button" onclick="setCommunicationTone('urgente')" id="tone-urgente" class="tone-btn py-3 px-2 text-xs md:text-sm font-black rounded-xl border-3 border-brand-darkText bg-brand-orange text-white shadow-[2px_2px_0px_#0f172a] transition-all">
+                                ⚡ Directo / Alerta
+                            </button>
+                            <button type="button" onclick="setCommunicationTone('empatico')" id="tone-empatico" class="tone-btn py-3 px-2 text-xs md:text-sm font-black rounded-xl border-3 border-brand-darkText bg-white text-brand-mutedText shadow-[2px_2px_0px_#0f172a] hover:bg-slate-50 transition-all">
+                                🌱 Empático / Humano
+                            </button>
+                            <button type="button" onclick="setCommunicationTone('tecnico')" id="tone-tecnico" class="tone-btn py-3 px-2 text-xs md:text-sm font-black rounded-xl border-3 border-brand-darkText bg-white text-brand-mutedText shadow-[2px_2px_0px_#0f172a] hover:bg-slate-50 transition-all">
+                                🔬 Técnico / Basado en Datos
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Generate Button -->
+                    <button type="submit" class="w-full text-white font-black py-4 px-6 rounded-2xl text-base flex items-center justify-center gap-2 transform active:scale-[0.98] transition-all clay-btn-orange">
+                        <i class="fa-solid fa-gears text-lg"></i>
+                        Generar 3 Modelos de Enganche
+                    </button>
+                </form>
+            </div>
+            
+            <div class="bg-brand-blueLight border-3 border-brand-darkText rounded-2xl p-4 flex gap-3 items-start shadow-[3px_3px_0px_#0f172a]">
+                <i class="fa-solid fa-circle-info text-brand-blue text-xl mt-0.5"></i>
+                <p class="text-xs text-brand-darkText font-semibold leading-relaxed">
+                    <strong>¿Qué pasa al hacer clic?</strong> Crearemos de inmediato 3 estrategias interconectadas científicamente (física, cognitiva y sensorial), cada una con una frase ancla usando emojis interactivos, un eslogan a la medida y una justificación técnica que podrás consultar en detalle.
+                </p>
+            </div>
+        </section>
+
+        <!-- VIEW 2: STRATEGIES RESULTS -->
+        <section id="view-results" class="space-y-6 hidden">
+            
+            <div class="flex items-center justify-between border-b-4 border-brand-darkText pb-4">
+                <div>
+                    <span class="text-xs font-black text-brand-orange uppercase tracking-wider">Ecosistema Diseñado</span>
+                    <h2 class="font-title text-2xl font-extrabold text-brand-darkText flex items-center gap-2">
+                        <i class="fa-solid fa-square-poll-vertical text-brand-blue"></i> Propuestas Activas
+                    </h2>
+                </div>
+                <button onclick="switchTab('config')" class="text-xs bg-white hover:bg-slate-100 text-brand-darkText font-bold py-2.5 px-4 rounded-xl border-2 border-brand-darkText flex items-center gap-1 shadow-[2px_2px_0px_#0f172a] transition-all active:translate-y-0.5">
+                    <i class="fa-solid fa-chevron-left text-[10px]"></i> Ajustar
+                </button>
+            </div>
+
+            <!-- Parameters Summary Header with Save All button -->
+            <div class="bg-slate-100 border-2 border-brand-darkText rounded-xl p-3 flex flex-wrap justify-between items-center gap-3 text-xs text-brand-darkText font-bold">
+                <div class="flex flex-wrap gap-2">
+                    <span class="bg-white px-2.5 py-1 rounded-md border border-slate-300"><strong>Población:</strong> <span id="summary-pop" class="text-brand-blue">Conductores</span></span>
+                    <span class="bg-white px-2.5 py-1 rounded-md border border-slate-300"><strong>Riesgo:</strong> <span id="summary-prob" class="text-brand-orange">Celular</span></span>
+                    <span class="bg-white px-2.5 py-1 rounded-md border border-slate-300"><strong>Tono:</strong> <span id="summary-tone" class="capitalize text-slate-700">Vibrante</span></span>
+                </div>
+                <button onclick="saveAllGeneratedToSheets()" class="bg-brand-emerald hover:bg-green-600 text-white px-3 py-2 rounded-lg border-2 border-brand-darkText shadow-[2px_2px_0px_#0f172a] active:translate-y-0.5 transition-all flex items-center gap-1">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Guardar las 3
+                </button>
+            </div>
+
+            <!-- Results Cards Container -->
+            <div id="results-grid" class="grid grid-cols-1 gap-6">
+                <!-- Dynamic cards injected here -->
+            </div>
+
+            <!-- SECCIÓN NUEVA: Escribe tu propia propuesta -->
+            <div class="mt-8 bg-brand-orangeLight/50 border-4 border-brand-darkText rounded-3xl p-5 md:p-6 shadow-[5px_5px_0px_#0f172a] relative group transition-all">
+                <h3 class="font-title text-xl font-extrabold text-brand-darkText mb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-pen-nib text-brand-orange transform group-hover:rotate-12 transition-transform"></i> ¿Tienes tu propia idea?
+                </h3>
+                <p class="text-sm text-brand-mutedText mb-4 font-medium">Usa la inspiración generada arriba para redactar y guardar tu propia estrategia personalizada.</p>
+                
+                <div class="space-y-3">
+                    <textarea id="customProposalText" rows="4" class="w-full bg-white border-3 border-brand-darkText rounded-xl p-4 text-sm font-semibold text-brand-darkText focus:ring-2 focus:ring-brand-orange focus:border-brand-orange outline-none custom-scroll shadow-[inset_2px_2px_0px_rgba(0,0,0,0.05)] transition-all resize-y" placeholder="Ej: Implementaré un sistema de puntos (Nudge) junto con balizas sonoras (Sistema Seguro) para que los conductores eviten..."></textarea>
+                    
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <button onclick="copyCustomProposal()" class="flex-1 bg-white hover:bg-brand-orange hover:text-white text-brand-darkText font-black py-3 px-6 rounded-xl border-3 border-brand-darkText shadow-[3px_3px_0px_#0f172a] active:translate-y-1 active:shadow-[1px_1px_0px_#0f172a] transition-all flex items-center justify-center gap-2">
+                            <i class="fa-regular fa-copy"></i> Copiar texto
+                        </button>
+                        <button onclick="saveCustomProposalToSheets()" class="flex-1 bg-brand-emerald hover:bg-green-600 text-white font-black py-3 px-6 rounded-xl border-3 border-brand-darkText shadow-[3px_3px_0px_#0f172a] active:translate-y-1 active:shadow-[1px_1px_0px_#0f172a] transition-all flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> Guardar en Sheets
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Back Button to help mobile navigation -->
+            <div class="pt-4 text-center border-t-2 border-slate-200 mt-4">
+                <button onclick="switchTab('config')" class="w-full sm:w-auto bg-slate-200 hover:bg-slate-300 text-brand-darkText font-bold py-3.5 px-6 rounded-xl border-2 border-brand-darkText shadow-[2px_2px_0px_#0f172a] active:translate-y-0.5 transition-all inline-flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-rotate-left"></i> Modificar Configuración
+                </button>
+            </div>
+        </section>
+
+        <!-- VIEW 3: CLAYMATION PLAYGROUND (INFOGRAPHICS) -->
+        <section id="view-clay" class="space-y-6 hidden">
+            <div class="text-center max-w-2xl mx-auto">
+                <span class="text-xs font-black bg-brand-clayYellow border-2 border-brand-darkText px-3 py-1 rounded-full uppercase tracking-widest inline-block text-brand-darkText transform rotate-[-1deg] stopmotion-animate">
+                    🎨 ¡APRENDIZAJE LÚDICO!
+                </span>
+                <h2 class="font-title text-3xl font-extrabold text-brand-darkText mt-3">
+                    La Ciencia Detrás, <br class="sm:hidden"><span class="bg-brand-orange text-white px-3 py-1 rounded-xl border-2 border-brand-darkText inline-block transform rotate-[1deg] stopmotion-animate-slow">Explicada con Plastilina</span>
+                </h2>
+                <p class="text-brand-mutedText text-sm mt-3">
+                    ¿Cómo es que estas disciplinas se fusionan para prevenir accidentes y fijarse en la mente? Moldeemos este concepto bloque por bloque.
+                </p>
+            </div>
+
+            <!-- Interactive clay animation blocks -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
+                
+                <!-- Pillar 1: Safe System -->
+                <div class="clay-style p-6 text-center space-y-4 hover:scale-[1.01] transition-transform relative group">
+                    <div class="absolute top-2 right-2 text-xs font-bold text-slate-400">Paso 1</div>
+                    <div class="w-20 h-20 bg-[#FCD34D] border-4 border-brand-darkText rounded-full mx-auto flex items-center justify-center shadow-[4px_4px_0px_#0f172a] stopmotion-animate relative overflow-hidden">
+                        <!-- Playful clay face / Shield -->
+                        <svg class="w-12 h-12" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M50 15L80 25V55C80 73.8 67.2 91 50 96C32.8 91 20 73.8 20 55V25L50 15Z" fill="#F59E0B" stroke="#0F172A" stroke-width="6"/>
+                            <circle cx="40" cy="45" r="5" fill="#0F172A"/>
+                            <circle cx="60" cy="45" r="5" fill="#0F172A"/>
+                            <path d="M43 60Q50 67 57 60" stroke="#0F172A" stroke-width="5" stroke-linecap="round" fill="none"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-title text-lg font-black text-brand-darkText">Don Escudo: Sistema Seguro</h3>
+                    <p class="text-xs text-brand-mutedText leading-relaxed">
+                        <strong>"¡Yo absorbo la fuerza!"</strong> En la plastilina de la vida real, los humanos somos blandos y nos equivocamos. Yo moldeo la infraestructura (vías, alarmas, barreras físicas) para que, si te distraes, el entorno "se doble" y te salve, impidiendo que la plastilina se aplaste del todo.
+                    </p>
+                    <div class="bg-yellow-50 border-2 border-yellow-400 p-2 rounded-xl text-[11px] font-bold text-yellow-800">
+                        ⚡ ¡Fricción física sobre el error!
+                    </div>
+                </div>
+
+                <!-- Pillar 2: Behavioral Science -->
+                <div class="clay-style p-6 text-center space-y-4 hover:scale-[1.01] transition-transform relative group">
+                    <div class="absolute top-2 right-2 text-xs font-bold text-slate-400">Paso 2</div>
+                    <div class="w-20 h-20 bg-[#60A5FA] border-4 border-brand-darkText rounded-full mx-auto flex items-center justify-center shadow-[4px_4px_0px_#0f172a] stopmotion-animate-slow relative overflow-hidden">
+                        <!-- Playful clay feet / Nudge -->
+                        <svg class="w-12 h-12" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M25 65C25 55 45 45 45 25C45 15 55 15 65 20C75 25 80 40 75 55" stroke="#1D4ED8" stroke-width="8" stroke-linecap="round"/>
+                            <path d="M25 65L75 55" stroke="#0F172A" stroke-width="6" stroke-linecap="round"/>
+                            <!-- Eye -->
+                            <circle cx="55" cy="35" r="6" fill="#0F172A"/>
+                            <circle cx="57" cy="33" r="2" fill="white"/>
+                            <!-- Smiling mouth -->
+                            <path d="M48 45Q52 48 56 44" stroke="#0F172A" stroke-width="3" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-title text-lg font-black text-brand-darkText">El Nudge Caminante</h3>
+                    <p class="text-xs text-brand-mutedText leading-relaxed">
+                        <strong>"¡Un empujoncito amable!"</strong> El cerebro es perezoso y siempre toma el camino que requiera menos plastilina (esfuerzo). En lugar de prohibir, yo coloco "caminos moldeados" por defecto. Hacemos que la opción más fácil, divertida y socialmente aceptada sea, precisamente, la segura.
+                    </p>
+                    <div class="bg-blue-50 border-2 border-blue-400 p-2 rounded-xl text-[11px] font-bold text-blue-800">
+                        🌱 ¡La senda de menor resistencia!
+                    </div>
+                </div>
+
+                <!-- Pillar 3: Neuromarketing -->
+                <div class="clay-style p-6 text-center space-y-4 hover:scale-[1.01] transition-transform relative group">
+                    <div class="absolute top-2 right-2 text-xs font-bold text-slate-400">Paso 3</div>
+                    <div class="w-20 h-20 bg-[#F87171] border-4 border-brand-darkText rounded-full mx-auto flex items-center justify-center shadow-[4px_4px_0px_#0f172a] stopmotion-animate relative overflow-hidden">
+                        <!-- Playful Neuromarketing Eye -->
+                        <svg class="w-12 h-12" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 50C20 50 35 30 50 30C65 30 80 50 80 50C80 50 65 70 50 70C35 70 20 50 20 50Z" fill="#FCA5A5" stroke="#0F172A" stroke-width="6"/>
+                            <circle cx="50" cy="50" r="14" fill="#EF4444" stroke="#0F172A" stroke-width="4"/>
+                            <circle cx="50" cy="50" r="5" fill="#0F172A"/>
+                            <circle cx="54" cy="46" r="2" fill="white"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-title text-lg font-black text-brand-darkText">El Imán Subconsciente</h3>
+                    <p class="text-xs text-brand-mutedText leading-relaxed">
+                        <strong>"¡Atención instantánea!"</strong> Al cerebro primitivo le atraen los colores vivos de la arcilla fresca, los contrastes locos y el ritmo. Yo diseño las mnemónicas pegajosas con emojis, sonidos mentales y slogans emotivos que se adhieren como chicle a tu lóbulo temporal para recordarte el peligro sin pensarlo.
+                    </p>
+                    <div class="bg-red-50 border-2 border-red-400 p-2 rounded-xl text-[11px] font-bold text-red-800">
+                        🎯 ¡Imán biológico en memoria!
+                    </div>
+                </div>
+            </div>
+
+            <!-- Playful Conclusion Banner -->
+            <div class="bg-slate-900 text-white rounded-3xl p-6 md:p-8 text-center border-4 border-brand-darkText shadow-[6px_6px_0px_#0f172a] relative overflow-hidden">
+                <div class="absolute -top-10 -left-10 w-40 h-40 bg-brand-orange/10 rounded-full blur-2xl"></div>
+                <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-brand-blue/10 rounded-full blur-2xl"></div>
+                
+                <h3 class="font-title text-xl font-bold mb-2">💡 ¿La Receta Maestra de Arcilla?</h3>
+                <p class="text-xs text-slate-300 max-w-xl mx-auto leading-relaxed">
+                    Si el <strong>Sistema Seguro</strong> nos da la masa perfecta, la <strong>Ciencia del Comportamiento</strong> le da la forma ideal al molde de decisiones, y el <strong>Neuromarketing</strong> lo pinta con colores tan llamativos que nadie podrá ignorarlo. ¡Ese es el secreto de una campaña indestructible!
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Detailed Strategy Modal -->
+    <div id="strategyModal" class="fixed inset-0 bg-slate-900/75 backdrop-blur-md flex items-center justify-center z-50 p-4 hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white border-4 border-brand-darkText w-full max-w-2xl rounded-[32px] shadow-[8px_8px_0px_#0f172a] max-h-[90vh] flex flex-col overflow-hidden transform scale-95 transition-transform duration-300" id="modalContent">
+            
+            <!-- Modal Header -->
+            <div class="p-6 border-b-4 border-brand-darkText flex items-start justify-between bg-slate-50">
+                <div>
+                    <span id="modalCategory" class="text-[10px] font-black tracking-widest text-white uppercase px-3 py-1 bg-brand-blue border-2 border-brand-darkText rounded-full inline-block mb-2">Pilar Principal</span>
+                    <h3 id="modalTitle" class="font-title text-xl md:text-2xl font-extrabold text-brand-darkText">Título de la Estrategia</h3>
+                </div>
+                <button onclick="closeModal()" class="text-slate-500 hover:text-brand-darkText bg-slate-200 hover:bg-slate-300 border-2 border-brand-darkText p-2 rounded-xl transition-all active:translate-y-0.5">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Modal Scrollable Content -->
+            <div class="p-6 overflow-y-auto custom-scroll space-y-6 bg-white">
+                
+                <!-- Visual Mnemonic Box -->
+                <div class="bg-brand-orangeLight/40 p-5 rounded-2xl border-3 border-brand-darkText shadow-[4px_4px_0px_#0f172a] space-y-3">
+                    <div>
+                        <span class="text-[10px] font-black text-brand-mutedText tracking-wider uppercase block mb-1">Mnemónico de Seguridad (Ancla Visual)</span>
+                        <div class="text-base md:text-lg font-extrabold text-brand-orangeDark flex items-center gap-2" id="modalAnchor">
+                            <!-- Emojis & Text -->
+                        </div>
+                    </div>
+                    <div class="border-t-2 border-brand-darkText/20 pt-3">
+                        <span class="text-[10px] font-black text-brand-mutedText tracking-wider uppercase block mb-1">Eslogan de Alto Impacto (Doble Capa)</span>
+                        <div class="text-sm md:text-base font-bold text-brand-darkText italic" id="modalSlogan">
+                            <!-- Slogan -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Three Pillars Scientific Breakdown -->
+                <div class="space-y-4">
+                    <h4 class="font-title text-xs font-black tracking-wider text-brand-mutedText uppercase border-b-2 border-slate-100 pb-1">Fundamentación Científica</h4>
+                    
+                    <!-- 1. Safe System -->
+                    <div class="p-4 rounded-xl bg-slate-50 border-3 border-brand-darkText border-l-brand-orange border-l-[10px] shadow-[2px_2px_0px_#0f172a]">
+                        <div class="flex items-center gap-2 mb-1.5">
+                            <i class="fa-solid fa-shield-halved text-brand-orange"></i>
+                            <h5 class="text-xs font-black text-brand-orangeDark uppercase tracking-wider">Sistema Seguro (Física & Redundancia)</h5>
+                        </div>
+                        <p class="text-xs text-brand-darkText font-semibold leading-relaxed" id="modalSafeSystem">Explicación del sistema seguro...</p>
+                    </div>
+
+                    <!-- 2. Behavioral Science -->
+                    <div class="p-4 rounded-xl bg-slate-50 border-3 border-brand-darkText border-l-brand-blue border-l-[10px] shadow-[2px_2px_0px_#0f172a]">
+                        <div class="flex items-center gap-2 mb-1.5">
+                            <i class="fa-solid fa-circle-nodes text-brand-blue"></i>
+                            <h5 class="text-xs font-black text-brand-blueDark uppercase tracking-wider">Ciencias del Comportamiento (Nudge Cognitivo)</h5>
+                        </div>
+                        <p class="text-xs text-brand-darkText font-semibold leading-relaxed" id="modalBehavior">Explicación del nudge...</p>
+                    </div>
+
+                    <!-- 3. Neuromarketing -->
+                    <div class="p-4 rounded-xl bg-slate-50 border-3 border-brand-darkText border-l-slate-700 border-l-[10px] shadow-[2px_2px_0px_#0f172a]">
+                        <div class="flex items-center gap-2 mb-1.5">
+                            <i class="fa-solid fa-eye text-slate-700"></i>
+                            <h5 class="text-xs font-black text-slate-800 uppercase tracking-wider">Neuromarketing e Impacto Subconsciente</h5>
+                        </div>
+                        <p class="text-xs text-brand-darkText font-semibold leading-relaxed" id="modalNeuromarketing">Explicación del neuromarketing...</p>
+                    </div>
+                </div>
+
+                <!-- Graphic Standards Suggested -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                    <div class="bg-slate-50 border-3 border-brand-darkText p-4 rounded-xl shadow-[2px_2px_0px_#0f172a]">
+                        <span class="text-[9px] font-black text-brand-mutedText tracking-wider uppercase block mb-2">Paleta Cromática Sugerida</span>
+                        <div class="flex items-center gap-3">
+                            <div class="flex" id="modalColors">
+                                <!-- Dynamic dots -->
+                            </div>
+                            <span class="text-xs text-brand-darkText font-bold" id="modalColorDesc">Paleta de color</span>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 border-3 border-brand-darkText p-4 rounded-xl shadow-[2px_2px_0px_#0f172a]">
+                        <span class="text-[9px] font-black text-brand-mutedText tracking-wider uppercase block mb-2">Tipografías Recomendadas</span>
+                        <p class="text-xs font-bold text-brand-darkText font-title" id="modalTypoTitle">Plus Jakarta Sans / Arial Black</p>
+                        <p class="text-[10px] text-brand-mutedText font-semibold" id="modalTypoBody">Inter SemiBold para soporte</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-5 border-t-4 border-brand-darkText bg-slate-50 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                    <button onclick="copyModalFormula()" class="w-full sm:w-auto text-xs bg-white hover:bg-slate-100 text-brand-blue font-black py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 border-2 border-brand-darkText shadow-[2px_2px_0px_#0f172a] active:translate-y-0.5 transition-all">
+                        <i class="fa-regular fa-copy"></i> Copiar
+                    </button>
+                    <!-- NUEVO BOTON GUARDAR EN SHEETS -->
+                    <button onclick="saveModalToSheets()" class="w-full sm:w-auto text-xs bg-brand-emerald hover:bg-green-600 text-white font-black py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 border-2 border-brand-darkText shadow-[2px_2px_0px_#0f172a] active:translate-y-0.5 transition-all">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Guardar en Sheets
+                    </button>
+                </div>
+                <button onclick="closeModal()" class="w-full sm:w-auto text-xs bg-brand-orange hover:bg-brand-orangeDark text-white font-black py-2.5 px-6 rounded-xl border-2 border-brand-darkText shadow-[2px_2px_0px_#0f172a] active:translate-y-0.5 transition-all text-center">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-auto border-t-4 border-brand-darkText py-6 bg-white">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-brand-mutedText space-y-1 font-bold">
+            <p>Diseñado NEO. Optimizado para dispositivos móviles.</p>
+            <p>Basado en los marcos de referencia del "Sistema Seguro" y "Behavioral Insights" de la OMS.</p>
+        </div>
+    </footer>
+
+    <script>
+        // =========================================================
+        // 🚀 URL DEL SCRIPT DE GOOGLE SHEETS
+        // REEMPLAZA ESTO CON LA URL DE TU WEB APP PUBLICADA DE GOOGLE APPS SCRIPT
+        // =========================================================
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby8doR0dIaKPdnmDl5uLX9L_13So_HBRjA1bSFI1aZAjQGjTazXa5XS9glRwTIPyVfv5A/exec'; 
+
+        let currentTone = 'urgente';
+        let activeTab = 'config';
+        let generatedOptionsData = [];
+
+        // Base de Datos Procedimental enriquecida y ampliada para evitar repeticiones
+        const DB_TEMPLATES = {
+            systemSafe: [
+                "Rediseñar el flujo inmediato de acción de {pop}, implantando límites físicos que absorban la energía del error. Esto crea una barrera mecánica y estructural que evita {prob} sin depender únicamente de la fuerza de voluntad del individuo.",
+                "Implementar tecnología restrictiva y control de velocidad progresivo o alertas hápticas de proximidad en el espacio de {pop}. De esta forma, si el cansancio provoca {prob}, la vía perdonadora asume el control seguro.",
+                "Estructurar un entorno físico tolerante a fallas en el cuadrante de {pop}, donde señales físicas gigantescas o sensores de presencia detienen los flujos de tránsito si se registra riesgo inminente de {prob}.",
+                "Modificar la infraestructura del entorno de {pop} con barreras perceptuales (como bandas sonoras o reductores ópticos) que rompan la inercia del movimiento antes de que ocurra {prob}.",
+                "Automatizar las respuestas de seguridad, creando un ecosistema físico donde {prob} sea mecánicamente muy difícil de ejecutar para {pop} sin activar una restricción automática."
+            ],
+            behaviorScience: [
+                "Utilizar la 'Arquitectura de Decisión por Defecto'. Establecer que para {pop} la opción más rápida de ejecutar en su jornada ya evite {prob}, haciendo que desviarse requiera un esfuerzo adicional.",
+                "Activar el 'Sesgo de Reciprocidad' y de 'Pares Normativos'. Enviar recordatorios sutiles demostrando que la gran mayoría de los {pop} ya evitan activamente {prob}, promoviendo cohesión grupal.",
+                "Implementar un micro-incentivo lúdico (Gamification) basado en la 'Aversión a la Pérdida'. {pop} inicia su ciclo diario con un puntaje de protección que disminuye si ocurre {prob}.",
+                "Aplicar 'Nudges de Prominencia' (Salience), colocando recordatorios visuales disruptivos exactamente en el punto de decisión clave de {pop} para interrumpir el patrón de {prob}.",
+                "Fomentar el 'Compromiso Público' (Commitment device), haciendo que {pop} verbalice o registre un pacto de equipo para erradicar {prob} al inicio de su rutina."
+            ],
+            neuromarketing: [
+                "Estimular de forma instantánea el cerebro reptiliano de {pop} con colores de altísimo contraste sensorial (Naranja Alerta y Azul), desactivando el piloto automático mental para frenar {prob}.",
+                "Generar un gatillo emocional enfocado en la 'Aversión a la Pérdida Social y Familiar'. Usar rostros humanos y miradas fijas en la señalética para captar atención y detener {prob}.",
+                "Estimular la memoria asociativa vinculando el mnemónico ancla de seguridad con un beneficio motivador de alivio para {pop}, logrando que prevenir {prob} se interprete como tranquilidad.",
+                "Utilizar 'Priming' sensorial (un sonido específico o iluminación focalizada) que {pop} asocie subconscientemente con estado de alerta, reduciendo drásticamente {prob}.",
+                "Diseñar piezas con el 'Efecto Von Restorff' (aislamiento visual): hacer que la instrucción para evitar {prob} rompa radicalmente el patrón visual monótono del entorno de {pop}."
+            ]
+        };
+
+        const VERBS_MATRIX = {
+            "urgente": ["Detente", "Alerta", "Frena", "Bloquea", "Reacciona", "Foco", "Atento", "Despierta"],
+            "empatico": ["Cuídate", "Regresa", "Valórate", "Protégelos", "Ama", "Acompaña", "Siente", "Respira"],
+            "tecnico": ["Activa", "Monitorea", "Optimiza", "Evalúa", "Calibra", "Asegura", "Registra", "Verifica"]
+        };
+
+        const RHYMING_PUNCHLINES = [
+            "en casa te esperan con una sonrisa intacta.",
+            "un segundo de descuido destruye un futuro.",
+            "tu vida no tiene repuestos en la caja de herramientas.",
+            "el camino seguro se construye paso a paso.",
+            "la prisa pasa, pero la vida permanece.",
+            "el asfalto no perdona, tu mente inteligente sí.",
+            "un hábito firme es tu mejor escudo protector.",
+            "la prevención de hoy es tu tranquilidad de mañana."
+        ];
+
+        const ANCHOR_EMOJIS = [
+            { icon: "📱🧠", label: "Pantalla Apagada, Vida Conectada" },
+            { icon: "🛡️🚗", label: "Ruta Segura, Mente Madura" },
+            { icon: "⏱️🔥", label: "Baja la Aguja, Brilla la Vida" },
+            { icon: "🛑👀", label: "Cero Distracción, Máxima Acción" },
+            { icon: "⚙️💚", label: "Cuerpo Protegido, Mañana Cumplido" },
+            { icon: "👣🌟", label: "Cruce Consciente, Paso Excelente" },
+            { icon: "💡🧘‍♂️", label: "Pausa en Ruta, Paz Absoluta" },
+            { icon: "🚦⚡", label: "Luz de Alerta, Mente Despierta" }
+        ];
+
+        function showToast(message, colorClass, iconClass) {
+            const toast = document.createElement('div');
+            toast.className = `fixed bottom-5 left-1/2 -translate-x-1/2 bg-brand-${colorClass} text-white border-3 border-brand-darkText px-5 py-3.5 rounded-2xl shadow-xl z-50 text-xs font-black flex items-center gap-2 animate-bounce`;
+            
+            if(colorClass === 'darkText') {
+                toast.className = `fixed bottom-5 left-1/2 -translate-x-1/2 bg-brand-darkText text-white border-3 border-brand-orange px-5 py-3.5 rounded-2xl shadow-xl z-50 text-xs font-black flex items-center gap-2 animate-bounce`;
+            }
+
+            toast.innerHTML = `<i class="fa-solid ${iconClass} text-lg"></i> ${message}`;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.add('opacity-0');
+                setTimeout(() => toast.remove(), 500);
+            }, 2500);
+        }
+
+        // =========================================================
+        // LOGICA DE GUARDADO EN GOOGLE SHEETS
+        // =========================================================
+        function updateSyncStatus(status) {
+            const badge = document.getElementById('syncBadge');
+            badge.classList.remove('bg-red-100', 'text-red-800', 'bg-green-100', 'text-green-800', 'bg-yellow-100', 'text-yellow-800');
+            
+            if (status === 'saving') {
+                badge.innerHTML = '⏳ Guardando...';
+                badge.classList.add('bg-yellow-100', 'text-yellow-800');
+            } else if (status === 'success') {
+                badge.innerHTML = '🟢 Resultados Sincronizados';
+                badge.classList.add('bg-green-100', 'text-green-800');
+            } else {
+                badge.innerHTML = '🔴 Resultados No Sincronizados';
+                badge.classList.add('bg-red-100', 'text-red-800');
+            }
+        }
+
+        async function saveToGoogleSheets(type, dataObj) {
+            if(SCRIPT_URL === 'TU_URL_DE_GOOGLE_APPS_SCRIPT_AQUI') {
+                showToast('¡Debes configurar la URL de Apps Script en el código!', 'clayRed', 'fa-triangle-exclamation');
+                return;
+            }
+
+            updateSyncStatus('saving');
+            
+            const pop = document.getElementById('summary-pop').innerText;
+            const prob = document.getElementById('summary-prob').innerText;
+            const tone = document.getElementById('summary-tone').innerText;
+
+            const payload = {
+                type: type, 
+                population: pop,
+                problem: prob,
+                tone: tone,
+                category: dataObj.category || 'N/A',
+                content: dataObj.content
+            };
+
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // Fundamental para que el navegador no bloquee el POST
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(payload)
+                });
+                
+                updateSyncStatus('success');
+                showToast('¡Guardado en Google Sheets con éxito!', 'emerald', 'fa-cloud-arrow-up');
+                setTimeout(() => { updateSyncStatus('none'); }, 6000);
+                
+            } catch (error) {
+                console.error('Error saving to sheets:', error);
+                updateSyncStatus('none');
+                showToast('Error de conexión con Sheets.', 'clayRed', 'fa-triangle-exclamation');
+            }
+        }
+
+        // =========================================================
+        // FUNCIONES DE INTERFAZ Y GENERACIÓN
+        // =========================================================
+
+        function getRandomUniqueIndices(max, count) {
+            const indices = Array.from({length: max}, (_, i) => i);
+            for (let i = indices.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [indices[i], indices[j]] = [indices[j], indices[i]];
+            }
+            return indices.slice(0, count);
+        }
+
+        function toggleCustomInput(fieldId) {
+            const selectEl = document.getElementById(fieldId);
+            const containerEl = document.getElementById(`custom-${fieldId}-container`);
+            
+            if (selectEl.value === 'custom') {
+                containerEl.classList.remove('hidden');
+                containerEl.querySelector('input').focus();
+            } else {
+                containerEl.classList.add('hidden');
+            }
+        }
+
+        function setCommunicationTone(tone) {
+            currentTone = tone;
+            document.querySelectorAll('.tone-btn').forEach(btn => {
+                btn.className = "tone-btn py-3 px-2 text-xs md:text-sm font-black rounded-xl border-3 border-brand-darkText bg-white text-brand-mutedText shadow-[2px_2px_0px_#0f172a] transition-all";
+            });
+            const activeBtn = document.getElementById(`tone-${tone}`);
+            activeBtn.className = "tone-btn py-3 px-2 text-xs md:text-sm font-black rounded-xl border-3 border-brand-darkText bg-brand-orange text-white shadow-[2px_2px_0px_#0f172a] transition-all";
+        }
+
+        function switchTab(tab) {
+            activeTab = tab;
+            const viewConfig = document.getElementById('view-config');
+            const viewResults = document.getElementById('view-results');
+            const viewClay = document.getElementById('view-clay');
+            
+            const btnConfig = document.getElementById('tab-config');
+            const btnResults = document.getElementById('tab-results');
+            const btnClay = document.getElementById('tab-clay');
+
+            viewConfig.classList.add('hidden');
+            viewResults.classList.add('hidden');
+            viewClay.classList.add('hidden');
+
+            [btnConfig, btnResults, btnClay].forEach(btn => {
+                btn.className = "flex-1 py-3 px-2 rounded-xl text-xs sm:text-sm font-black transition-all duration-300 flex items-center justify-center gap-1.5 text-brand-mutedText hover:text-brand-darkText border-2 border-transparent";
+            });
+
+            const activeClass = "flex-1 py-3 px-2 rounded-xl text-xs sm:text-sm font-black transition-all duration-300 flex items-center justify-center gap-1.5 bg-brand-orange text-white border-2 border-brand-darkText shadow-[2px_2px_0px_#0f172a]";
+
+            if (tab === 'config') {
+                viewConfig.classList.remove('hidden');
+                btnConfig.className = activeClass;
+            } else if (tab === 'results') {
+                viewResults.classList.remove('hidden');
+                btnResults.className = activeClass;
+            } else {
+                viewClay.classList.remove('hidden');
+                btnClay.className = activeClass;
+            }
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function generateDynamicSlogan(pop, prob, tone) {
+            const verbs = VERBS_MATRIX[tone] || VERBS_MATRIX['urgente'];
+            const verb = verbs[Math.floor(Math.random() * verbs.length)];
+            const punchline = RHYMING_PUNCHLINES[Math.floor(Math.random() * RHYMING_PUNCHLINES.length)];
+            
+            let cleanProb = prob.replace(/el uso de |la omisión de |el exceso de |la |el |los /gi, "").trim();
+            return `"${verb} hoy para evitar ${cleanProb} en tu jornada; recuerda que ${punchline}"`;
+        }
+
+        function processForm() {
+            updateSyncStatus('none'); 
+            
+            const selectPop = document.getElementById('population').value;
+            let popText = selectPop;
+            if (selectPop === 'custom') {
+                popText = document.getElementById('custom-population').value.trim();
+                if (!popText) popText = "Población Específica";
+            }
+
+            const selectProb = document.getElementById('problem').value;
+            let probText = selectProb;
+            if (selectProb === 'custom') {
+                probText = document.getElementById('custom-problem').value.trim();
+                if (!probText) probText = "Riesgo no Especificado";
+            }
+
+            document.getElementById('summary-pop').innerText = popText;
+            document.getElementById('summary-prob').innerText = probText;
+            document.getElementById('summary-tone').innerText = currentTone;
+
+            generateThreeStrategies(popText, probText, currentTone);
+
+            const badge = document.getElementById('resultsCountBadge');
+            badge.classList.remove('hidden');
+            
+            switchTab('results');
+        }
+
+        function generateThreeStrategies(pop, prob, tone) {
+            const resultsGrid = document.getElementById('results-grid');
+            resultsGrid.innerHTML = '';
+            generatedOptionsData = [];
+
+            const titles = [
+                "Rediseño Físico y Coercitivo del Entorno",
+                "Arquitectura del Nudge y Autocuidado Social",
+                "Impacto Biológico de Memoria y Aversión"
+            ];
+
+            const categories = [
+                "Enfoque de Sistema Seguro (Física / Redundancia)",
+                "Ciencias del Comportamiento (Nudges / Decisiones)",
+                "Neuromarketing (Anclaje Biológico / Memoria)"
+            ];
+
+            const safeSystemIndices = getRandomUniqueIndices(DB_TEMPLATES.systemSafe.length, 3);
+            const behaviorIndices = getRandomUniqueIndices(DB_TEMPLATES.behaviorScience.length, 3);
+            const neuroIndices = getRandomUniqueIndices(DB_TEMPLATES.neuromarketing.length, 3);
+            const emojiIndices = getRandomUniqueIndices(ANCHOR_EMOJIS.length, 3);
+
+            const colorsPalette = [
+                { colors: ["#F97316", "#2563EB", "#0F172A"], desc: "Naranja Alerta, Azul Seguridad y Oscuro Profundo" },
+                { colors: ["#2563EB", "#3B82F6", "#F97316"], desc: "Azul Tecnológico, Celeste y Naranja Vibrante" },
+                { colors: ["#EA580C", "#0F172A", "#E2E8F0"], desc: "Naranja Intenso, Gris Ceniza y Fondo Blanco Neón" }
+            ];
+
+            for (let i = 0; i < 3; i++) {
+                let ssText = DB_TEMPLATES.systemSafe[safeSystemIndices[i]].replace(/{pop}/g, pop).replace(/{prob}/g, prob);
+                let bsText = DB_TEMPLATES.behaviorScience[behaviorIndices[i]].replace(/{pop}/g, pop).replace(/{prob}/g, prob);
+                let nmText = DB_TEMPLATES.neuromarketing[neuroIndices[i]].replace(/{pop}/g, pop).replace(/{prob}/g, prob);
+
+                let finalSlogan = generateDynamicSlogan(pop, prob, tone);
+                let selectedMnemonicObj = ANCHOR_EMOJIS[emojiIndices[i]];
+                let dynamicMnemonic = `${selectedMnemonicObj.icon} ${selectedMnemonicObj.label} 💡`;
+
+                const strategyObj = {
+                    id: i,
+                    category: categories[i],
+                    title: titles[i],
+                    anchor: dynamicMnemonic,
+                    slogan: finalSlogan,
+                    safeSystem: ssText,
+                    behavior: bsText,
+                    neuromarketing: nmText,
+                    colors: colorsPalette[i].colors,
+                    colorDesc: colorsPalette[i].desc,
+                    typoTitle: "Plus Jakarta Sans ExtraBold",
+                    typoBody: "Inter Medium para texto principal"
+                };
+
+                generatedOptionsData.push(strategyObj);
+
+                const card = document.createElement('div');
+                card.className = "bg-white border-4 border-brand-darkText rounded-3xl p-5 md:p-6 shadow-[5px_5px_0px_#0f172a] hover:translate-y-[-2px] hover:shadow-[7px_7px_0px_#0f172a] transition-all cursor-pointer relative overflow-hidden group";
+                card.setAttribute('onclick', `openModal(${i})`);
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between mb-3 relative z-10">
+                        <span class="text-[10px] font-black tracking-widest uppercase px-3 py-1 rounded-full border-2 border-brand-darkText bg-slate-100 text-brand-darkText">
+                            ${strategyObj.category}
+                        </span>
+                        <span class="text-xs text-brand-orange font-black flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                            Analizar Detalle <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </span>
+                    </div>
+
+                    <h3 class="font-title text-lg md:text-xl font-extrabold text-brand-darkText mb-3 group-hover:text-brand-blue transition-colors relative z-10">
+                        ${strategyObj.title}
+                    </h3>
+
+                    <div class="bg-slate-50 p-3 rounded-xl border-2 border-brand-darkText mb-3 relative z-10">
+                        <span class="text-[9px] text-brand-mutedText font-black block mb-1 uppercase tracking-wider">Frase Ancla + Emojis Sugerida:</span>
+                        <p class="text-sm font-extrabold text-brand-darkText">${strategyObj.anchor}</p>
+                    </div>
+
+                    <p class="text-xs text-brand-mutedText line-clamp-2 italic mb-4 relative z-10 font-medium">
+                        ${strategyObj.slogan}
+                    </p>
+
+                    <div class="flex items-center justify-between border-t-2 border-slate-150 pt-3 relative z-10 text-[11px] text-brand-darkText font-bold">
+                        <div class="flex items-center gap-2">
+                            <span class="text-[9px] font-black uppercase tracking-wider text-slate-400">Paleta:</span>
+                            <div class="flex -space-x-1.5">
+                                ${strategyObj.colors.map(col => `<div class="w-4 h-4 rounded-full border-2 border-brand-darkText" style="background-color: ${col}"></div>`).join('')}
+                            </div>
+                        </div>
+                        <span class="bg-brand-blue/10 text-brand-blue px-2 py-0.5 rounded-md border border-brand-blue/30 text-[9px] uppercase font-black">Científico</span>
+                    </div>
+                `;
+
+                resultsGrid.appendChild(card);
+            }
+        }
+
+        function openModal(index) {
+            const data = generatedOptionsData[index];
+            if (!data) return;
+
+            document.getElementById('modalCategory').innerText = data.category;
+            document.getElementById('modalTitle').innerText = data.title;
+            document.getElementById('modalAnchor').innerHTML = `
+                <span class="bg-white px-3 py-2 rounded-xl border-2 border-brand-darkText block w-full text-center font-black text-brand-darkText">${data.anchor}</span>
+            `;
+            document.getElementById('modalSlogan').innerText = data.slogan;
+            document.getElementById('modalSafeSystem').innerText = data.safeSystem;
+            document.getElementById('modalBehavior').innerText = data.behavior;
+            document.getElementById('modalNeuromarketing').innerText = data.neuromarketing;
+
+            const colorsContainer = document.getElementById('modalColors');
+            colorsContainer.innerHTML = '';
+            data.colors.forEach(col => {
+                const dot = document.createElement('div');
+                dot.className = "w-5 h-5 rounded-full border-2 border-brand-darkText mr-1 shadow-sm";
+                dot.style.backgroundColor = col;
+                dot.title = col;
+                colorsContainer.appendChild(dot);
+            });
+            document.getElementById('modalColorDesc').innerText = data.colorDesc;
+            document.getElementById('modalTypoTitle').innerText = data.typoTitle;
+
+            const modal = document.getElementById('strategyModal');
+            const content = document.getElementById('modalContent');
+            
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                content.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('strategyModal');
+            const content = document.getElementById('modalContent');
+            
+            modal.classList.add('opacity-0');
+            content.classList.add('scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function generateModalCopyText() {
+            const title = document.getElementById('modalTitle').innerText;
+            const category = document.getElementById('modalCategory').innerText;
+            const anchor = document.getElementById('modalAnchor').innerText;
+            const slogan = document.getElementById('modalSlogan').innerText;
+            const safeSystem = document.getElementById('modalSafeSystem').innerText;
+            const behavior = document.getElementById('modalBehavior').innerText;
+            const neuromarketing = document.getElementById('modalNeuromarketing').innerText;
+
+            return `Fórmula Laboratorio Creativo:\nConcepto: ${title}\nPilar: ${category}\nAncla: ${anchor}\nSlogan: ${slogan}\n\n1. Sistema Seguro: ${safeSystem}\n2. Nudges: ${behavior}\n3. Neuromarketing: ${neuromarketing}`;
+        }
+
+        function copyModalFormula() {
+            const textToCopy = generateModalCopyText();
+            const textarea = document.createElement("textarea");
+            document.body.appendChild(textarea);
+            textarea.value = textToCopy;
+            textarea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textarea);
+            showToast('¡Concepto copiado al portapapeles!', 'darkText', 'fa-circle-check text-brand-orange');
+        }
+
+        function saveAllGeneratedToSheets() {
+            if (generatedOptionsData.length === 0) return;
+            
+            let combinedContent = "";
+            generatedOptionsData.forEach((opt, i) => {
+                combinedContent += `--- Opción ${i+1} ---\nAncla: ${opt.anchor}\nSlogan: ${opt.slogan}\n\n`;
+            });
+
+            saveToGoogleSheets('Lote de 3 Estrategias', {
+                category: 'Generadas Automáticamente',
+                content: combinedContent.trim()
+            });
+        }
+
+        function saveModalToSheets() {
+            const anchor = document.getElementById('modalAnchor').innerText;
+            const slogan = document.getElementById('modalSlogan').innerText;
+            const category = document.getElementById('modalCategory').innerText;
+            
+            const compactContent = `Ancla: ${anchor}\nSlogan: ${slogan}`;
+            
+            saveToGoogleSheets('Estrategia Generada', {
+                category: category,
+                content: compactContent
+            });
+        }
+
+        function copyCustomProposal() {
+            const textArea = document.getElementById('customProposalText');
+            const textToCopy = textArea.value.trim();
+
+            if (!textToCopy) {
+                showToast('El lienzo está vacío. Escribe tu propuesta.', 'clayRed', 'fa-triangle-exclamation');
+                return;
+            }
+
+            const finalCopy = `Mi Propuesta - Laboratorio Creativo:\n${textToCopy}`;
+            const dummy = document.createElement("textarea");
+            document.body.appendChild(dummy);
+            dummy.value = finalCopy;
+            dummy.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummy);
+            showToast('¡Propuesta guardada en el portapapeles!', 'emerald', 'fa-check-double');
+        }
+
+        function saveCustomProposalToSheets() {
+            const textArea = document.getElementById('customProposalText');
+            const textToCopy = textArea.value.trim();
+
+            if (!textToCopy) {
+                showToast('Escribe tu propuesta antes de enviarla a Sheets.', 'clayRed', 'fa-triangle-exclamation');
+                return;
+            }
+
+            let finalContent = `IDEA PROPIA:\n${textToCopy}\n\n=== OPCIONES GENERADAS DE INSPIRACIÓN ===\n`;
+            generatedOptionsData.forEach((opt, i) => {
+                finalContent += `Opción ${i + 1}:\nAncla: ${opt.anchor}\nSlogan: ${opt.slogan}\n\n`;
+            });
+
+            saveToGoogleSheets('Propuesta Propia', {
+                category: 'Personalizada',
+                content: finalContent.trim()
+            });
+        }
+
+        window.onload = function() {
+            processForm();
+            switchTab('config');
+        };
+    </script>
+</body>
+</html>
