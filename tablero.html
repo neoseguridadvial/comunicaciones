@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neo Seguridad Vial - Repositorio de Comunicaciones</title>
+    <!-- Tailwind CSS para diseño corporativo limpio -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- PapaParse para procesamiento CSV rápido -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <!-- Lucide Icons para simbología profesional -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc; /* Fondo gris-azul muy suave y limpio */
+        }
+
+        /* Estilos corporativos para los botones de frases */
+        .phrase-item {
+            transition: all 0.2s ease-in-out;
+        }
+        .phrase-item:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(30, 41, 59, 0.05);
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Notificaciones / Toast corporativo -->
+    <div id="toast" class="fixed top-4 right-4 z-50 transform translate-y-[-100px] opacity-0 transition-all duration-300 ease-out pointer-events-none">
+        <div class="bg-slate-900 text-white px-5 py-3.5 rounded-xl shadow-lg flex items-center gap-3 border border-slate-800">
+            <span id="toast-icon" class="text-amber-500">
+                <i data-lucide="info" class="w-5 h-5"></i>
+            </span>
+            <p id="toast-message" class="text-xs font-semibold tracking-wide"></p>
+        </div>
+    </div>
+
+    <!-- Barra de Navegación Institucional (Neo Seguridad Vial) -->
+    <header class="border-b border-slate-200 bg-white sticky top-0 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                
+                <!-- Logo y Título -->
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center shrink-0">
+                        <img src="https://i.imgur.com/NAq8Hg3.png" alt="Neo Seguridad Vial" class="h-12 w-auto object-contain" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1590086782957-93c06ef21604?w=100';">
+                    </div>
+                    <div class="border-l border-slate-200 pl-4 py-1">
+                        <h1 class="text-base font-extrabold tracking-tight text-slate-900">REPOSITORIO DE COMUNICACIONES</h1>
+                        <p class="text-[11px] text-slate-500 font-medium uppercase tracking-wider">Campaña de Prevención y Seguridad Vial</p>
+                    </div>
+                </div>
+
+                <!-- Estado del Canal y Botón de Sincronización -->
+                <div class="flex items-center gap-3 flex-wrap">
+                    <div class="text-[11px] bg-slate-50 text-slate-600 px-3 py-2 rounded-lg border border-slate-200 flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span class="font-semibold" id="source-indicator">Estableciendo canal...</span>
+                    </div>
+                    <button onclick="fetchSheetData()" class="flex items-center gap-1.5 px-4 py-2 bg-slate-900 hover:bg-slate-800 active:bg-black text-white text-xs font-bold rounded-lg transition-all shadow-sm">
+                        <i data-lucide="refresh-cw" class="w-3.5 h-3.5" id="reload-icon"></i>
+                        Sincronizar Datos
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full space-y-6 relative z-10">
+
+        <!-- Spinner de carga -->
+        <div id="loader" class="hidden bg-white/80 border border-slate-200 backdrop-blur-sm p-10 rounded-2xl flex flex-col items-center justify-center space-y-4 shadow-sm">
+            <div class="relative w-12 h-12">
+                <div class="absolute inset-0 border-4 border-slate-100 rounded-full"></div>
+                <div class="absolute inset-0 border-4 border-t-slate-800 rounded-full animate-spin"></div>
+            </div>
+            <p class="text-xs font-bold text-slate-600 uppercase tracking-widest">Extrayendo campañas de seguridad...</p>
+        </div>
+
+        <!-- Panel de Configuración de Datos (Estilo Neo) -->
+        <section id="setup-panel" class="bg-white border border-slate-200 rounded-2xl p-6 relative overflow-hidden shadow-sm">
+            <div class="space-y-4">
+                <div class="inline-flex items-center gap-2 px-3 py-1 bg-amber-50 text-amber-800 rounded-full border border-amber-200 text-[10px] font-bold uppercase tracking-wider">
+                    <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i> Gestión del Canal de Datos
+                </div>
+                <h2 class="text-lg font-bold text-slate-900">Origen de Campañas de Comunicación</h2>
+                <p class="text-xs text-slate-600 leading-relaxed max-w-4xl">
+                    Esta herramienta procesa los datos en tiempo real de tu hoja de cálculo. Analiza la columna <strong class="text-slate-900">"Contenido Detallado"</strong> y extrae de forma automática las anclas y slogans clave de las campañas "Procedimiento" y "Andenes" para consolidarlos visualmente.
+                </p>
+
+                <!-- URL del Google Sheet -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-3 pt-2">
+                    <div class="md:col-span-10 relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                            <i data-lucide="link" class="w-4 h-4"></i>
+                        </span>
+                        <input type="url" id="sheet-url" class="block w-full pl-10 pr-4 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-800 text-slate-700 font-mono" value="https://docs.google.com/spreadsheets/d/e/2PACX-1vSTbEDeNHa2JzUXM8pua7NMsCioyAUqr8kgOkwEAh2d9qLoe_eDM1wGEYyae5lVTR507NCs8lJLLfRi/pub?output=csv">
+                    </div>
+                    <button onclick="fetchSheetData()" class="md:col-span-2 px-4 py-2.5 bg-slate-950 hover:bg-slate-900 text-white rounded-lg text-xs font-bold transition-colors shadow-sm">
+                        Conectar URL
+                    </button>
+                </div>
+
+                <div class="flex flex-wrap gap-3 pt-1 text-xs">
+                    <button onclick="loadMockData()" class="text-slate-600 hover:text-slate-950 font-bold flex items-center gap-1.5 transition-colors">
+                        <i data-lucide="database" class="w-3.5 h-3.5 text-slate-400"></i> Cargar campaña oficial preestablecida
+                    </button>
+                    <span class="text-slate-300">|</span>
+                    <button onclick="toggleRawInput()" class="text-slate-500 hover:text-slate-800 font-semibold flex items-center gap-1.5 transition-colors">
+                        <i data-lucide="file-text" class="w-3.5 h-3.5"></i> Insertar texto CSV manual
+                    </button>
+                </div>
+
+                <!-- Entrada manual en bruto (Oculta) -->
+                <div id="raw-input-container" class="hidden space-y-3 pt-4 border-t border-slate-100">
+                    <textarea id="raw-csv" rows="4" class="block w-full p-4 text-xs font-mono bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900/10 text-slate-700" placeholder="Autor,Propuesta,Categoria,Fecha,Contenido Detallado&#10;Idea Propia: Andenes,Andenes,Andenes,2026-06-02,Ancla: 📱 Mi Ancla\nSlogan: Mi Slogan"></textarea>
+                    <div class="flex justify-end">
+                        <button onclick="processRawCSV()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-lg transition-all shadow-sm">
+                            Procesar CSV
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bloque Principal de Filtros e Indicadores -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- PANEL 1: Nube Consolidada de Slogans y Anclas -->
+            <section class="lg:col-span-8 bg-white border border-slate-200 rounded-2xl p-6 flex flex-col justify-between space-y-5 shadow-sm">
+                
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-center gap-2.5">
+                        <div class="p-2 bg-slate-50 text-slate-700 rounded-xl border border-slate-200 shadow-sm">
+                            <i data-lucide="message-square" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-base font-bold text-slate-950">Consolidación de Mensajes Clave</h2>
+                            <p class="text-[11px] text-slate-500">Selecciona y filtra de forma interactiva las propuestas de prevención vial.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Indicador de Filtro Activo de la Nube -->
+                    <div id="word-filter-indicator" class="hidden items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg shadow-sm">
+                        <span class="text-[10px] text-slate-600 font-bold font-mono">Filtro de Selección Activo</span>
+                        <button onclick="clearCloudFilter()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                            <i data-lucide="x-circle" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Selectores de Tipo de Mensajes -->
+                <div class="flex gap-1.5 bg-slate-100 p-1 rounded-xl border border-slate-200/60 w-fit">
+                    <button id="view-slogans-btn" onclick="setCloudView('slogans')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white text-slate-900 shadow-sm">
+                        Slogans Consolidados
+                    </button>
+                    <button id="view-anclas-btn" onclick="setCloudView('anclas')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-500 hover:text-slate-800">
+                        Anclas de Concepto
+                    </button>
+                </div>
+
+                <!-- Contenedor de la Nube de Frases -->
+                <div class="relative bg-slate-50/50 rounded-xl border border-slate-200/80 min-h-[300px] p-5 flex flex-col items-stretch justify-center gap-2.5 overflow-hidden" id="word-cloud-box">
+                    <!-- Dinámico -->
+                </div>
+
+                <div class="flex items-center justify-between text-[11px] text-slate-400 border-t border-slate-100 pt-3">
+                    <span>Banco de Mensajes oficiales de Neo Seguridad Vial</span>
+                    <span class="flex items-center gap-1 text-slate-500"><i data-lucide="info" class="w-3.5 h-3.5 text-slate-400"></i> Haz clic en una frase para filtrar las tarjetas</span>
+                </div>
+            </section>
+
+            <!-- PANEL 2: Indicadores y Formulario de Nueva Propuesta -->
+            <section class="lg:col-span-4 flex flex-col gap-6">
+                
+                <!-- KPIs de Campaña -->
+                <div class="bg-white border border-slate-200 rounded-2xl p-5 space-y-4 shadow-sm">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="pie-chart" class="w-4 h-4 text-slate-600"></i>
+                        <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400">Métricas de Campaña</h3>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/60">
+                            <span class="text-[10px] text-slate-500 uppercase tracking-wider block font-semibold">Campañas</span>
+                            <span class="text-xl font-extrabold text-slate-900 mt-0.5 block" id="meta-total">0</span>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/60">
+                            <span class="text-[10px] text-slate-500 uppercase tracking-wider block font-semibold">Categorías</span>
+                            <span class="text-xl font-extrabold text-slate-900 mt-0.5 block" id="meta-concepts">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Agregar Propuesta Propia -->
+                <div class="bg-white border border-slate-200 rounded-2xl p-5 space-y-4 relative overflow-hidden shadow-sm">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="plus-circle" class="w-4.5 h-4.5 text-slate-700"></i>
+                        <h3 class="text-sm font-bold text-slate-900">Añadir Propuesta Nueva</h3>
+                    </div>
+                    <p class="text-xs text-slate-500 leading-relaxed">
+                        Integra una nueva propuesta al repositorio. Formatea el Contenido Detallado usando "Ancla:" y "Slogan:" para alimentar la nube de slogans de manera correcta.
+                    </p>
+
+                    <div class="space-y-2.5">
+                        <div>
+                            <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Nombre / Identificador</label>
+                            <input type="text" id="new-author" class="block w-full px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-400" placeholder="Ej. Idea Propia: Andenes">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Tema Principal</label>
+                            <input type="text" id="new-proposal" class="block w-full px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-400" placeholder="Ej. Campaña Peatones">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Contenido Detallado Estructurado</label>
+                            <textarea id="new-detailed-content" rows="2" class="block w-full px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-400 font-mono text-[10px]" placeholder="Opción 1:&#10;Ancla: 📱 Mi Ancla&#10;Slogan: Mi Slogan"></textarea>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Categoría</label>
+                                <input type="text" id="new-category" class="block w-full px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-400" placeholder="Ej. Andenes">
+                            </div>
+                            <div class="flex items-end">
+                                <button onclick="addNewCustomProposal()" class="w-full py-1.5 bg-slate-900 hover:bg-slate-850 active:bg-black text-white text-xs font-bold rounded-lg transition-all shadow-sm flex items-center justify-center gap-1">
+                                    <i data-lucide="plus" class="w-3.5 h-3.5"></i> Integrar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+        </div>
+
+        <!-- Mosaico de Tarjetas de Comunicaciones -->
+        <section class="space-y-6">
+            
+            <!-- Barra de Búsqueda y Filtros de Campaña -->
+            <div class="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
+                
+                <div class="flex flex-col sm:flex-row sm:items-center gap-3 flex-grow max-w-3xl">
+                    <div class="relative w-full sm:w-80">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                            <i data-lucide="search" class="w-4 h-4"></i>
+                        </span>
+                        <input type="text" id="search-input" oninput="handleSearch()" class="block w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-950/10 text-xs text-slate-700 font-medium" placeholder="Buscar por concepto, slogan, detalle...">
+                    </div>
+
+                    <!-- Selector de Categoría -->
+                    <select id="category-filter" onchange="handleCategoryFilter()" class="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-500 font-bold focus:outline-none focus:ring-2 focus:ring-slate-950/10">
+                        <option value="">Todas las Categorías</option>
+                    </select>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <span class="text-xs font-semibold text-slate-500" id="results-counter">Campañas listadas: 0</span>
+                    <button onclick="resetAllFilters()" class="text-xs font-bold text-slate-900 hover:text-slate-600 flex items-center gap-1 transition-colors">
+                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                        Limpiar Filtros
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Grid de Campañas de Comunicación -->
+            <div id="ideas-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Se inyectan dinámicamente las tarjetas de campañas -->
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Footer Corporativo -->
+    <footer class="border-t border-slate-200 bg-white text-slate-500 text-xs py-10 mt-16 relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6 text-center md:text-left">
+            <div class="space-y-1">
+                <p class="font-bold text-slate-800 tracking-wider">NEO SEGURIDAD VIAL // GESTIÓN DE COMUNICACIONES</p>
+                <p class="text-[11px] text-slate-500">Consolidación integral de slogans, anclas e iniciativas preventivas de seguridad vial.</p>
+            </div>
+            <div class="flex justify-center md:justify-end gap-6 text-[10px] text-slate-400 font-mono font-semibold">
+                <span>CONEXIÓN CLOUD INTEGRADA</span>
+                <span>© 2026 TODOS LOS DERECHOS RESERVADOS</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Script de la Aplicación -->
+    <script>
+        // Datos de la Aplicación
+        let rawData = [];             // Datos completos estructurados
+        let filteredData = [];        // Datos aplicando filtros y búsquedas
+        let activeCloudWord = "";     // Filtro por slogan de la nube
+        let categories = new Set();   // Categorías únicas detectadas
+        let cloudView = 'slogans';    // 'slogans' o 'anclas'
+
+        // Inicializar interfaz
+        window.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            fetchSheetData(); // Intenta conectar de inicio
+        });
+
+        // Mostrar Toast corporativo
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            const messageEl = document.getElementById('toast-message');
+            const iconEl = document.getElementById('toast-icon');
+            
+            messageEl.textContent = message;
+            
+            if (type === 'error') {
+                iconEl.className = "text-rose-600";
+                iconEl.innerHTML = '<i data-lucide="alert-circle" class="w-5 h-5"></i>';
+            } else if (type === 'success') {
+                iconEl.className = "text-emerald-600";
+                iconEl.innerHTML = '<i data-lucide="sparkles" class="w-5 h-5"></i>';
+            } else {
+                iconEl.className = "text-slate-800";
+                iconEl.innerHTML = '<i data-lucide="info" class="w-5 h-5"></i>';
+            }
+            
+            lucide.createIcons({attrs: {class: 'w-5 h-5'}});
+            
+            toast.classList.remove('translate-y-[-100px]', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-[-100px]', 'opacity-0');
+                toast.classList.remove('translate-y-0', 'opacity-100');
+            }, 3000);
+        }
+
+        // Alternar visualización del panel de configuración
+        function toggleRawInput() {
+            const container = document.getElementById('raw-input-container');
+            container.classList.toggle('hidden');
+        }
+
+        // Cambiar vista de la nube (Anclas vs Slogans)
+        function setCloudView(view) {
+            cloudView = view;
+            const slogansBtn = document.getElementById('view-slogans-btn');
+            const anclasBtn = document.getElementById('view-anclas-btn');
+            
+            if (view === 'slogans') {
+                slogansBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white text-slate-900 shadow-sm border border-slate-200";
+                anclasBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-500 hover:text-slate-800";
+            } else {
+                anclasBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white text-slate-900 shadow-sm border border-slate-200";
+                slogansBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-500 hover:text-slate-800";
+            }
+            renderWordCloud();
+        }
+
+        // Obtener el CSV de Google Sheets
+        async function fetchSheetData() {
+            const urlInput = document.getElementById('sheet-url').value;
+            const loader = document.getElementById('loader');
+            const reloadIcon = document.getElementById('reload-icon');
+            const sourceIndicator = document.getElementById('source-indicator');
+
+            if (!urlInput) {
+                showToast("Por favor, introduce una URL válida", "error");
+                return;
+            }
+
+            if (reloadIcon) reloadIcon.classList.add('animate-spin');
+            loader.classList.remove('hidden');
+
+            try {
+                const response = await fetch(urlInput);
+                if (!response.ok) throw new Error('No se pudo conectar.');
+                
+                const csvText = await response.text();
+                document.getElementById('raw-csv').value = csvText;
+                
+                parseAndProcessCSV(csvText);
+                showToast("Canal de datos sincronizado con éxito", "success");
+                sourceIndicator.textContent = "Google Sheets Conectado";
+            } catch (err) {
+                console.error("Fetch Error: ", err);
+                showToast("Servidor inaccesible. Cargando Procedimientos y Andenes locales.", "info");
+                loadMockData(); // Respaldo local de seguridad vial
+            } finally {
+                loader.classList.add('hidden');
+                if (reloadIcon) reloadIcon.classList.remove('animate-spin');
+            }
+        }
+
+        // Procesar manualmente los datos del cuadro de texto
+        function processRawCSV() {
+            const rawText = document.getElementById('raw-csv').value;
+            if (!rawText.trim()) {
+                showToast("El cuadro de texto de datos CSV está vacío", "error");
+                return;
+            }
+            parseAndProcessCSV(rawText);
+            showToast("Datos procesados con éxito", "success");
+            document.getElementById('source-indicator').textContent = "Carga manual";
+            toggleRawInput();
+        }
+
+        // Cargar el set de datos oficial de Procedimiento y Andenes
+        function loadMockData() {
+            const mockCSV = `Autor,Propuesta,Categoría,Fecha,Contenido Detallado
+Idea Propia: Procedimiento,Procedimiento,Procedimiento,2026-06-02,"=== OPCIONES GENERADAS DE INSPIRACIÓN ===
+Opción 1:
+Ancla: ⏱️🔥 Baja la Aguja, Brilla la Vida 💡
+Slogan: ""Calibra hoy para evitar celular y distracción digital en ruta en tu jornada; recuerda que la prevención de hoy es tu tranquilidad de mañana.""
+
+Opción 2:
+Ancla: 🛡️🚗 Ruta Segura, Mente Madura 💡
+Slogan: ""Monitorea hoy para evitar celular y distracción digital en ruta en tu jornada; recuerda que el camino seguro se construye paso a paso.""
+
+Opción 3:
+Ancla: 👣🌟 Cruce Consciente, Paso Excelente 💡
+Slogan: ""Verifica hoy para evitar celular y distracción digital en ruta en tu jornada; recuerda que un hábito firme es tu mejor escudo protector."""
+Idea Propia: Andenes,Andenes,Andenes,2026-06-02,"=== OPCIONES GENERADAS DE INSPIRACIÓN ===
+Opción 1:
+Ancla: 📱🧠 Pantalla Apagada, Vida Conectada 💡
+Slogan: ""Regresa hoy para evitar celular y distracción digital en ruta en tu jornada; recuerda que el camino seguro se construye paso a paso.""
+
+Opción 2:
+Ancla: 🚦⚡ Luz de Alerta, Mente Despierta 💡
+Slogan: ""Ama hoy para evitar celular y distracción digital en ruta en tu jornada; recuerda que tu vida no tiene repuestos en la caja de herramientas.""
+
+Opción 3:
+Ancla: 👣🌟 Cruce Consciente, Paso Excelente 💡
+Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en tu jornada; recuerda que un segundo de descuido destruye un futuro."""`;
+
+            document.getElementById('raw-csv').value = mockCSV;
+            parseAndProcessCSV(mockCSV);
+            showToast("Comunicaciones preestablecidas cargadas", "success");
+            document.getElementById('source-indicator').textContent = "Datos Locales";
+        }
+
+        // Parsear CSV usando PapaParse
+        function parseAndProcessCSV(csvText) {
+            Papa.parse(csvText, {
+                header: true,
+                skipEmptyLines: true,
+                dynamicTyping: true,
+                complete: function(results) {
+                    if (results.data && results.data.length > 0) {
+                        rawData = mapGenericFields(results.data);
+                        
+                        // Detectar categorías
+                        categories.clear();
+                        rawData.forEach(row => {
+                            if (row.Categoria) categories.add(row.Categoria);
+                        });
+                        
+                        resetAllFilters();
+                        populateCategoryDropdown();
+                    } else {
+                        showToast("El archivo CSV no contiene registros procesables", "error");
+                    }
+                },
+                error: function() {
+                    showToast("Formato CSV no reconocido", "error");
+                }
+            });
+        }
+
+        // Algoritmo de extracción de frases (Anclas y Slogans)
+        function extractPhrases(text) {
+            if (!text) return { anclas: [], slogans: [] };
+            
+            const anclas = [];
+            const slogans = [];
+            
+            const lines = text.split('\n');
+            lines.forEach(line => {
+                const cleanLine = line.trim();
+                if (cleanLine.startsWith('Ancla:')) {
+                    let val = cleanLine.substring(cleanLine.indexOf(':') + 1).trim();
+                    val = val.replace(/^["'«“](.*)["'»”]$/, '$1'); // Limpiar comillas
+                    if (val) anclas.push(val);
+                } else if (cleanLine.startsWith('Slogan:')) {
+                    let val = cleanLine.substring(cleanLine.indexOf(':') + 1).trim();
+                    val = val.replace(/^["'«“](.*)["'»”]$/, '$1'); // Limpiar comillas
+                    if (val) slogans.push(val);
+                }
+            });
+            
+            // Fallback si no viene con etiquetas estructuradas
+            if (anclas.length === 0 && slogans.length === 0) {
+                slogans.push(text.trim());
+            }
+            
+            return { anclas, slogans };
+        }
+
+        // Normalizar los nombres de columnas
+        function mapGenericFields(data) {
+            return data.map((row, idx) => {
+                let Autor = row["Autor"] || row["autor"] || row["Nombre"] || row["nombre"] || row["Creador"] || "Idea Propia";
+                let Propuesta = row["Propuesta"] || row["propuesta"] || row["Frase"] || row["frase"] || row["Ancla"] || row["ancla"] || row["Título"] || row["titulo"];
+                let ContenidoDetallado = row["Contenido Detallado"] || row["Contenido detallado"] || row["contenido detallado"] || row["ContenidoDetallado"] || row["contenido_detallado"] || row["Slogan"] || row["slogan"] || row["Detalle"] || row["detalle"];
+
+                const { anclas, slogans } = extractPhrases(ContenidoDetallado);
+
+                if (Propuesta === "Procedimiento" || Propuesta === "Andenes" || !Propuesta) {
+                    Propuesta = (anclas.length > 0) ? anclas[0] : (slogans.length > 0 ? slogans[0].slice(0, 30) + '...' : "Propuesta #" + (idx + 1));
+                }
+
+                let Categoria = row["Categoría"] || row["categoria"] || row["Categoría"] || row["Categoria"] || row["Tag"] || row["tag"] || "General";
+                let Fecha = row["Fecha"] || row["fecha"] || row["Date"] || row["date"] || "2026-06-02";
+
+                return {
+                    Id: idx + 1,
+                    Autor,
+                    Propuesta,
+                    ContenidoDetallado,
+                    ExtractedAnclas: anclas,
+                    ExtractedSlogans: slogans,
+                    Categoria,
+                    Fecha
+                };
+            });
+        }
+
+        // Popular selector de categorías
+        function populateCategoryDropdown() {
+            const dropdown = document.getElementById('category-filter');
+            dropdown.innerHTML = '<option value="">Todas las Categorías</option>';
+            
+            categories.forEach(cat => {
+                const opt = document.createElement('option');
+                opt.value = cat;
+                opt.textContent = cat;
+                dropdown.appendChild(opt);
+            });
+        }
+
+        // Filtrar y actualizar
+        function applyFilters() {
+            const searchQuery = document.getElementById('search-input').value.toLowerCase().trim();
+            const catFilter = document.getElementById('category-filter').value;
+
+            filteredData = rawData.filter(item => {
+                const matchesSearch = searchQuery === "" || 
+                    item.Autor.toLowerCase().includes(searchQuery) || 
+                    item.Propuesta.toLowerCase().includes(searchQuery) || 
+                    item.ContenidoDetallado.toLowerCase().includes(searchQuery) || 
+                    item.Categoria.toLowerCase().includes(searchQuery);
+
+                const matchesCategory = catFilter === "" || item.Categoria === catFilter;
+
+                let matchesCloudWord = true;
+                if (activeCloudWord !== "") {
+                    if (cloudView === 'slogans') {
+                        matchesCloudWord = item.ExtractedSlogans.includes(activeCloudWord);
+                    } else {
+                        matchesCloudWord = item.ExtractedAnclas.includes(activeCloudWord);
+                    }
+                }
+
+                return matchesSearch && matchesCategory && matchesCloudWord;
+            });
+
+            document.getElementById('results-counter').textContent = `Campañas listadas: ${filteredData.length}`;
+            renderIdeasGrid();
+            renderWordCloud();
+            updateMetaStats();
+        }
+
+        // Generar Nube de Frases Completas
+        function renderWordCloud() {
+            const cloudContainer = document.getElementById('word-cloud-box');
+            cloudContainer.innerHTML = '';
+
+            if (rawData.length === 0) {
+                cloudContainer.innerHTML = `
+                    <div class="text-center space-y-3 py-12 text-slate-400 w-full">
+                        <i data-lucide="cloud-lightning" class="w-12 h-12 mx-auto text-slate-400 animate-bounce"></i>
+                        <p class="text-sm font-semibold">Esperando contenido detallado para procesar...</p>
+                        <p class="text-xs max-w-sm mx-auto">Asegúrate de que tus datos contengan la columna "Contenido Detallado".</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            const phraseCounts = {};
+            filteredData.forEach(item => {
+                const list = cloudView === 'slogans' ? item.ExtractedSlogans : item.ExtractedAnclas;
+                list.forEach(phrase => {
+                    if (phrase && phrase.trim() !== "") {
+                        const trimmed = phrase.trim();
+                        phraseCounts[trimmed] = (phraseCounts[trimmed] || 0) + 1;
+                    }
+                });
+            });
+
+            const uniquePhrases = Object.entries(phraseCounts).map(([phrase, count]) => ({ phrase, count }));
+
+            if (uniquePhrases.length === 0) {
+                cloudContainer.innerHTML = `
+                    <div class="text-center space-y-3 py-12 text-slate-400 w-full">
+                        <i data-lucide="cloud-lightning" class="w-12 h-12 mx-auto text-slate-400"></i>
+                        <p class="text-sm font-semibold">No se encontraron propuestas coincidentes</p>
+                        <p class="text-xs max-w-sm mx-auto font-mono">Prueba cambiando la vista o limpiando filtros activos.</p>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            const neonBorderColors = [
+                'hover:border-slate-400 hover:bg-slate-50 text-slate-800 border-slate-200',
+                'hover:border-orange-400 hover:bg-orange-50/50 text-slate-800 border-slate-200',
+                'hover:border-blue-400 hover:bg-blue-50/50 text-slate-800 border-slate-200',
+                'hover:border-emerald-400 hover:bg-emerald-50/50 text-slate-800 border-slate-200'
+            ];
+
+            uniquePhrases.forEach((phraseObj, index) => {
+                const phraseButton = document.createElement('button');
+                const isSelected = activeCloudWord === phraseObj.phrase;
+                const borderTheme = neonBorderColors[index % neonBorderColors.length];
+
+                phraseButton.className = `phrase-item w-full text-left p-3 rounded-xl border bg-white transition-all focus:outline-none flex items-start gap-3 shadow-sm`;
+                
+                if (isSelected) {
+                    phraseButton.className += ` border-slate-800 bg-slate-100 shadow-md scale-[1.01]`;
+                } else {
+                    phraseButton.className += ` ${borderTheme}`;
+                }
+
+                const icon = cloudView === 'slogans' ? 'quote' : 'anchor';
+
+                phraseButton.innerHTML = `
+                    <div class="p-1.5 rounded-lg bg-slate-50 text-slate-600 mt-0.5 shrink-0 border border-slate-200/50">
+                        <i data-lucide="${icon}" class="w-3.5 h-3.5"></i>
+                    </div>
+                    <div class="space-y-0.5 flex-1 min-w-0">
+                        <p class="text-xs font-semibold leading-relaxed break-words">${phraseObj.phrase}</p>
+                    </div>
+                    <span class="text-[9px] font-bold bg-slate-100 text-slate-500 border border-slate-200 px-1.5 py-0.5 rounded-full font-mono shrink-0">${phraseObj.count}</span>
+                `;
+
+                phraseButton.onclick = () => {
+                    toggleCloudPhraseFilter(phraseObj.phrase);
+                };
+
+                cloudContainer.appendChild(phraseButton);
+            });
+
+            lucide.createIcons();
+        }
+
+        // Filtro por frase de la nube
+        function toggleCloudPhraseFilter(phrase) {
+            if (activeCloudWord === phrase) {
+                clearCloudFilter();
+            } else {
+                activeCloudWord = phrase;
+                const filterIndicator = document.getElementById('word-filter-indicator');
+                filterIndicator.classList.remove('hidden');
+                filterIndicator.classList.add('flex');
+                
+                showToast(`Mostrando propuestas asociadas a la frase seleccionada`, "info");
+                applyFilters();
+            }
+        }
+
+        // Limpiar filtro de la nube
+        function clearCloudFilter() {
+            activeCloudWord = "";
+            document.getElementById('word-filter-indicator').classList.remove('flex');
+            document.getElementById('word-filter-indicator').classList.add('hidden');
+            applyFilters();
+        }
+
+        // Renderizar Mosaico Creativo
+        function renderIdeasGrid() {
+            const grid = document.getElementById('ideas-grid');
+            grid.innerHTML = '';
+
+            if (filteredData.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full bg-white border border-slate-200 rounded-2xl p-12 text-center space-y-4 shadow-sm">
+                        <i data-lucide="folder-search" class="w-12 h-12 mx-auto text-slate-300"></i>
+                        <h3 class="font-bold text-slate-900">No hay propuestas coincidentes</h3>
+                        <p class="text-xs text-slate-500 max-w-sm mx-auto">Revisa los filtros activos o realiza otra búsqueda.</p>
+                        <button onclick="resetAllFilters()" class="px-4 py-2 bg-slate-900 hover:bg-slate-850 text-white text-xs font-bold rounded-lg transition-all shadow-sm">Mostrar Todo</button>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            filteredData.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "bg-white border border-slate-200 hover:border-slate-400 rounded-2xl p-6 transition-all duration-300 hover:shadow-md flex flex-col justify-between group relative overflow-hidden shadow-sm";
+                
+                // Mapeo dinámico de badges de impacto
+                const complexity = item.ContenidoDetallado.length;
+                let impactBadge = "Bajo impacto";
+                let badgeColor = "bg-slate-100 text-slate-600 border-slate-200";
+                
+                if (complexity > 120) {
+                    impactBadge = "Alta Prioridad";
+                    badgeColor = "bg-orange-50 text-orange-700 border-orange-200";
+                } else if (complexity > 70) {
+                    impactBadge = "Campaña Activa";
+                    badgeColor = "bg-blue-50 text-blue-700 border-blue-200";
+                } else if (complexity > 30) {
+                    impactBadge = "General";
+                    badgeColor = "bg-emerald-50 text-emerald-700 border-emerald-200";
+                }
+
+                const categoryColor = getCategoryStyling(item.Categoria);
+
+                const optionsHtml = item.ExtractedSlogans.map((slogan, sIdx) => {
+                    const matchedAncla = item.ExtractedAnclas[sIdx] || "";
+                    return `
+                        <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2 phrase-item">
+                            <div class="flex items-center gap-1.5 text-[10px] font-bold text-slate-900 uppercase">
+                                <span class="bg-slate-200 px-1.5 py-0.5 rounded text-slate-700">Opción ${sIdx + 1}</span>
+                                ${matchedAncla ? `<span class="text-slate-500 font-semibold truncate">| ${matchedAncla}</span>` : ''}
+                            </div>
+                            <p class="text-xs text-slate-700 leading-relaxed font-medium">"${slogan}"</p>
+                        </div>
+                    `;
+                }).join('');
+
+                card.innerHTML = `
+                    <div class="space-y-4 relative z-10 flex-grow">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-[9px] ${categoryColor} px-2.5 py-1 rounded-full border font-bold uppercase tracking-wider">${item.Categoria}</span>
+                            <span class="text-[9px] ${badgeColor} px-2.5 py-1 rounded-full border font-bold uppercase tracking-wider">${impactBadge}</span>
+                        </div>
+
+                        <!-- Propuestas Extraídas -->
+                        <div class="space-y-3">
+                            <span class="text-[9px] text-slate-400 uppercase tracking-widest font-mono font-bold block">Contenido de Campaña</span>
+                            <div class="space-y-2.5">
+                                ${optionsHtml}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pie de Tarjeta -->
+                    <div class="border-t border-slate-100 pt-4 mt-6 flex items-center justify-between relative z-10">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center border border-slate-200 font-bold text-[10px] text-slate-700 uppercase">
+                                ${item.Autor.substring(0, 2)}
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-slate-800">${item.Autor}</h4>
+                                <p class="text-[9px] text-slate-400 font-mono">${item.Fecha}</p>
+                            </div>
+                        </div>
+
+                        <button onclick="copyProposalToClipboard(${item.Id})" class="p-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors" title="Copiar todas las opciones">
+                            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                `;
+
+                grid.appendChild(card);
+            });
+
+            lucide.createIcons();
+        }
+
+        // Colores de categoría corporativos
+        function getCategoryStyling(cat) {
+            const str = cat.toLowerCase();
+            if (str.includes('proce')) {
+                return 'bg-amber-50 text-amber-800 border-amber-200';
+            } else if (str.includes('andene')) {
+                return 'bg-cyan-50 text-cyan-800 border-cyan-200';
+            }
+            return 'bg-slate-100 text-slate-700 border-slate-200';
+        }
+
+        // Agregar propuesta localmente
+        function addNewCustomProposal() {
+            const author = document.getElementById('new-author').value.trim();
+            const proposal = document.getElementById('new-proposal').value.trim();
+            const detailedContent = document.getElementById('new-detailed-content').value.trim();
+            const category = document.getElementById('new-category').value.trim();
+
+            if (!author || !proposal || !detailedContent || !category) {
+                showToast("Por favor completa los cuatro campos del formulario", "error");
+                return;
+            }
+
+            const today = new Date().toISOString().slice(0, 10);
+            const { anclas, slogans } = extractPhrases(detailedContent);
+
+            const newIdea = {
+                Id: rawData.length + 1,
+                Autor: author,
+                Propuesta: proposal,
+                ContenidoDetallado: detailedContent,
+                ExtractedAnclas: anclas,
+                ExtractedSlogans: slogans,
+                Categoria: category,
+                Fecha: today
+            };
+
+            rawData.unshift(newIdea);
+            categories.add(category);
+
+            populateCategoryDropdown();
+            applyFilters();
+            
+            document.getElementById('new-author').value = '';
+            document.getElementById('new-proposal').value = '';
+            document.getElementById('new-detailed-content').value = '';
+            document.getElementById('new-category').value = '';
+
+            showToast("Mensaje de seguridad integrado con éxito", "success");
+        }
+
+        // KPIs
+        function updateMetaStats() {
+            document.getElementById('meta-total').textContent = filteredData.length.toLocaleString();
+            const uniqueCategories = new Set(filteredData.map(item => item.Categoria));
+            document.getElementById('meta-concepts').textContent = uniqueCategories.size;
+        }
+
+        function handleSearch() {
+            applyFilters();
+        }
+
+        function handleCategoryFilter() {
+            applyFilters();
+        }
+
+        function resetAllFilters() {
+            document.getElementById('search-input').value = '';
+            document.getElementById('category-filter').value = '';
+            activeCloudWord = "";
+            document.getElementById('word-filter-indicator').classList.add('hidden');
+            applyFilters();
+            showToast("Filtros del repositorio restablecidos", "info");
+        }
+
+        // Copiar slogans consolidado al portapapeles
+        function copyProposalToClipboard(id) {
+            const item = rawData.find(r => r.Id === id);
+            if (!item) return;
+
+            const textToCopy = item.ExtractedSlogans.map((s, idx) => `Opción ${idx+1}: Ancla: ${item.ExtractedAnclas[idx] || ""} - Slogan: "${s}"`).join('\n');
+            const textarea = document.createElement("textarea");
+            textarea.value = textToCopy;
+            textarea.style.position = "fixed";
+            document.body.appendChild(textarea);
+            textarea.select();
+            try {
+                document.execCommand("copy");
+                showToast("Mensajes de campaña copiados al portapapeles", "success");
+            } catch (err) {
+                showToast("No se pudo copiar el contenido", "error");
+            }
+            document.body.removeChild(textarea);
+        }
+    </script>
+</body>
+</html>
