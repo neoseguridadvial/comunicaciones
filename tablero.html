@@ -52,7 +52,7 @@
         </div>
     </div>
 
-    <!-- Barra de Navegación Institucional (Laboratorio Creactivo) -->
+    <!-- Barra de Navegación Institucional (Laboratorio Creativo) -->
     <header class="border-b border-orange-100 bg-white sticky top-0 z-40 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -61,10 +61,10 @@
                 <div class="flex items-center gap-4">
                     <div class="flex items-center shrink-0">
                         <!-- Logo oficial provisto por el usuario -->
-                        <img src="https://i.imgur.com/NAq8Hg3.png" alt="Laboratorio Creactivo" class="h-14 w-auto object-contain" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1557804506-669a67965ba0?w=100';">
+                        <img src="https://i.imgur.com/NAq8Hg3.png" alt="Laboratorio Creativo" class="h-14 w-auto object-contain" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1557804506-669a67965ba0?w=100';">
                     </div>
                     <div class="border-l border-orange-100 pl-4 py-1">
-                        <h1 class="text-base font-extrabold tracking-tight text-orange-950 font-syne">LABORATORIO CREACTIVO</h1>
+                        <h1 class="text-base font-extrabold tracking-tight text-orange-950 font-syne">LABORATORIO CREATIVO</h1>
                         <p class="text-[11px] text-orange-600 font-bold uppercase tracking-wider">¿Qué piensa el auditorio?</p>
                     </div>
                 </div>
@@ -97,13 +97,13 @@
             <p class="text-xs font-bold text-orange-700 uppercase tracking-widest">Extrayendo respuestas del auditorio...</p>
         </div>
 
-        <!-- Panel de Configuración de Datos (Estilo Laboratorio Creactivo) -->
+        <!-- Panel de Configuración de Datos (Estilo Laboratorio Creativo) -->
         <section id="setup-panel" class="bg-white border border-orange-100 rounded-2xl p-6 relative overflow-hidden shadow-sm">
             <div class="space-y-4">
                 <div class="inline-flex items-center gap-2 px-3 py-1 bg-orange-50 text-orange-800 rounded-full border border-orange-200 text-[10px] font-bold uppercase tracking-wider">
                     <i data-lucide="mic-2" class="w-3.5 h-3.5"></i> Interacción y Co-creación
                 </div>
-                <h2 class="text-lg font-bold text-slate-900">Configuración del Origen del Laboratorio Creactivo</h2>
+                <h2 class="text-lg font-bold text-slate-900">Configuración del Origen del Laboratorio Creativo</h2>
                 <p class="text-xs text-slate-600 leading-relaxed max-w-4xl">
                     Esta interfaz procesa en tiempo real los mensajes de tu auditorio. Extrae de forma rigurosa el texto bajo la directiva <strong class="text-orange-600">"IDEA PROPIA"</strong> de la columna <strong class="text-orange-600">"Contenido Detallado"</strong> para mapear el pensamiento puro de cada participante.
                 </p>
@@ -298,7 +298,7 @@
                         </div>
 
                         <!-- Selector de Categoría -->
-                        <select id="category-filter" onchange="handleCategoryFilter()" class="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-500 font-bold focus:outline-none focus:ring-2 focus:ring-orange-500/10">
+                        <select id="category-filter" onchange="handleCategoryFilter()" class="px-3 py-2 bg-slate-50 border border-orange-200 rounded-xl text-xs text-slate-500 font-bold focus:outline-none focus:ring-2 focus:ring-orange-500/10">
                             <option value="">Todas las Categorías</option>
                         </select>
                     </div>
@@ -429,7 +429,7 @@
     <footer class="border-t border-orange-100 bg-white text-slate-400 text-xs py-10 mt-16 relative z-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6 text-center md:text-left">
             <div class="space-y-1">
-                <p class="font-bold text-slate-800 tracking-wider font-syne">LABORATORIO CREACTIVO // ESTUDIO DE AUDIENCIA</p>
+                <p class="font-bold text-slate-800 tracking-wider font-syne">LABORATORIO CREATIVO // ESTUDIO DE AUDIENCIA</p>
                 <p class="text-[11px] text-slate-500">Análisis interactivo de opinión, slogans, anclas e impacto de mensajes.</p>
             </div>
             <div class="flex justify-center md:justify-end gap-6 text-[10px] text-slate-400 font-mono font-semibold">
@@ -1130,6 +1130,7 @@ Slogan: ""Cuídate hoy para evitar Elementos de Protección Personal (EPP) en tu
             applyFilters();
         }
 
+        // Resetear todos los filtros de búsqueda y nube
         function resetAllFilters() {
             document.getElementById('search-input').value = '';
             document.getElementById('category-filter').value = '';
@@ -1235,7 +1236,7 @@ Slogan: ""Cuídate hoy para evitar Elementos de Protección Personal (EPP) en tu
             const totalSlogans = sloganCount;
 
             summaryBox.innerHTML = `
-                El <strong>Laboratorio Creactivo</strong> registra un total de <strong>${filteredData.length} campañas</strong> que consolidan <strong>${totalSlogans} slogans activos</strong> de respuesta en el auditorio. 
+                El <strong>Laboratorio Creativo</strong> registra un total de <strong>${filteredData.length} campañas</strong> que consolidan <strong>${totalSlogans} slogans activos</strong> de respuesta en el auditorio. 
                 La problemática clave a mitigar es <span class="text-orange-600 font-bold">"${topProblem}"</span>, empleando un tono de comunicación predominantemente <span class="text-orange-600 font-bold">"${topTone}"</span>. 
                 La principal estrategia aplicada es de tipo <strong>"${topStrategy}"</strong> dirigida específicamente a un público de <strong>"${topTarget}"</strong>. 
                 Los slogans registran un largo medio de <strong>${avgWords} palabras</strong>, logrando un balance ideal entre asimilación y recordación ágil.
