@@ -105,7 +105,7 @@
                 </div>
                 <h2 class="text-lg font-bold text-slate-900">Configuración del Origen del Laboratorio Creactivo</h2>
                 <p class="text-xs text-slate-600 leading-relaxed max-w-4xl">
-                    Esta interfaz procesa en tiempo real los mensajes de tu auditorio. Extrae los slogans de la columna <strong class="text-orange-600">"Contenido Detallado"</strong> y desglosa de forma analítica el impacto comunicativo basado en su <span class="text-orange-600 font-semibold">Estrategia, Población, Problemática y Tono</span>.
+                    Esta interfaz procesa en tiempo real los mensajes de tu auditorio. Extrae de forma rigurosa el texto bajo la directiva <strong class="text-orange-600">"IDEA PROPIA"</strong> de la columna <strong class="text-orange-600">"Contenido Detallado"</strong> para mapear el pensamiento puro de cada participante.
                 </p>
 
                 <!-- URL del Google Sheet -->
@@ -126,14 +126,14 @@
                         <i data-lucide="database" class="w-3.5 h-3.5 text-orange-500"></i> Cargar campaña oficial preestablecida
                     </button>
                     <span class="text-slate-300">|</span>
-                    <button onclick="toggleRawInput()" class="text-slate-500 hover:text-slate-800 font-semibold flex items-center gap-1.5 transition-colors">
+                    <button onclick="toggleRawInput()" class="text-xs text-slate-500 hover:text-slate-800 font-semibold flex items-center gap-1.5 transition-colors">
                         <i data-lucide="file-text" class="w-3.5 h-3.5"></i> Insertar texto CSV manual
                     </button>
                 </div>
 
-                <!-- Entrada manual en bruto (Oculta) -->
+                <!-- Input en bruto oculto inicialmente -->
                 <div id="raw-input-container" class="hidden space-y-3 pt-4 border-t border-orange-100">
-                    <textarea id="raw-csv" rows="4" class="block w-full p-4 text-xs font-mono bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/10 text-slate-700" placeholder="Autor,Propuesta,Categoria,Fecha,Contenido Detallado,Tipo de Estrategia,Población Objetivo,Problemática,Tono&#10;Idea Propia: Andenes,Andenes,Andenes,2026-06-02,Ancla: 📱 Mi Ancla\nSlogan: Mi Slogan,Preventiva,Peatones,Uso de celular,Concientizador"></textarea>
+                    <textarea id="raw-csv" rows="4" class="block w-full p-4 text-xs font-mono bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500/10 text-slate-700" placeholder="Autor,Propuesta,Categoria,Fecha,Contenido Detallado,Tipo de Estrategia,Población Objetivo,Problemática,Tono&#10;Idea Propia,Andenes,Andenes,2026-06-02,IDEA PROPIA:&#10;Mas socializacion,Preventiva,Peatones,Uso de celular,Concientizador"></textarea>
                     <div class="flex justify-end">
                         <button onclick="processRawCSV()" class="px-4 py-2 bg-orange-600 hover:bg-orange-500 text-white text-xs font-bold rounded-lg transition-all shadow-sm">
                             Procesar CSV
@@ -189,6 +189,9 @@
                         <button id="view-anclas-btn" onclick="setCloudView('anclas')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-500 hover:text-orange-600">
                             Anclas de Concepto
                         </button>
+                        <button id="view-propuestas-btn" onclick="setCloudView('propuestas')" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-500 hover:text-orange-600">
+                            Ideas Propias
+                        </button>
                     </div>
 
                     <!-- Contenedor de la Nube de Frases -->
@@ -236,16 +239,16 @@
 
                         <div class="space-y-2.5">
                             <div>
-                                <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Nombre / Identificador</label>
-                                <input type="text" id="new-author" class="block w-full px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 focus:outline-none focus:ring-1 focus:ring-orange-400" placeholder="Ej. Idea Propia: Andenes">
+                                <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Nombre / Identificador (Autor)</label>
+                                <input type="text" id="new-author" class="block w-full px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 focus:outline-none focus:ring-1 focus:ring-orange-400" placeholder="Ej. Alex Creativo">
                             </div>
                             <div>
-                                <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Tema Principal</label>
-                                <input type="text" id="new-proposal" class="block w-full px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 focus:outline-none focus:ring-1 focus:ring-orange-400" placeholder="Ej. Campaña Peatones">
+                                <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Idea Propia (Escribe el valor a extraer)</label>
+                                <input type="text" id="new-proposal" class="block w-full px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 focus:outline-none focus:ring-1 focus:ring-orange-400" placeholder="Ej. Mas socializacion">
                             </div>
                             <div>
-                                <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Contenido Detallado Estructurado</label>
-                                <textarea id="new-detailed-content" rows="2" class="block w-full px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 focus:outline-none focus:ring-1 focus:ring-orange-400 font-mono text-[10px]" placeholder="Opción 1:&#10;Ancla: 📱 Mi Ancla&#10;Slogan: Mi Slogan"></textarea>
+                                <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Contenido Detallado Completo</label>
+                                <textarea id="new-detailed-content" rows="2" class="block w-full px-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-700 focus:outline-none focus:ring-1 focus:ring-orange-400 font-mono text-[10px]" placeholder="IDEA PROPIA:&#10;Mas socializacion&#10;&#10;=== OPCIONES GENERADAS DE INSPIRACIÓN ===&#10;Opción 1:&#10;Ancla: ⏱️ Mi Ancla&#10;Slogan: Mi Slogan"></textarea>
                             </div>
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
@@ -260,7 +263,7 @@
                             <div class="grid grid-cols-2 gap-2">
                                 <div>
                                     <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Problemática</label>
-                                    <input type="text" id="new-problem" class="block w-full px-3 py-1 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 text-xs" placeholder="Ej. Uso de audífonos">
+                                    <input type="text" id="new-problem" class="block w-full px-3 py-1 bg-slate-50 border border-slate-200 rounded-lg text-slate-700 text-xs" placeholder="Ej. Uso de celular">
                                 </div>
                                 <div>
                                     <label class="block text-[10px] text-slate-500 uppercase font-bold mb-1">Tono</label>
@@ -357,7 +360,7 @@
                 </div>
             </section>
 
-            <!-- Grid de Gráficos con Chart.js (Naranja Vibrante) -->
+            <!-- Grid de Gráficos con Chart.js (Naranja Vibrante y Alto Contraste) -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 
                 <!-- Gráfico 1: Tipo de Estrategia -->
@@ -443,7 +446,7 @@
         let filteredData = [];        // Datos aplicando filtros y búsquedas
         let activeCloudWord = "";     // Filtro por slogan de la nube
         let categories = new Set();   // Categorías únicas detectadas
-        let cloudView = 'slogans';    // 'slogans' o 'anclas'
+        let cloudView = 'slogans';    // 'slogans', 'anclas' o 'propuestas'
         
         // Instancias de Gráficos de Chart.js
         let strategyChartInstance = null;
@@ -518,18 +521,24 @@
             container.classList.toggle('hidden');
         }
 
-        // Cambiar vista de la nube (Anclas vs Slogans)
+        // Cambiar vista de la nube (Anclas vs Slogans vs Propuestas)
         function setCloudView(view) {
             cloudView = view;
             const slogansBtn = document.getElementById('view-slogans-btn');
             const anclasBtn = document.getElementById('view-anclas-btn');
+            const propuestasBtn = document.getElementById('view-propuestas-btn');
+            
+            // Restablecer estilos de botones
+            slogansBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-500 hover:text-orange-600";
+            anclasBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-500 hover:text-orange-600";
+            propuestasBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-500 hover:text-orange-600";
             
             if (view === 'slogans') {
                 slogansBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white text-orange-600 shadow-sm border border-orange-200";
-                anclasBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-500 hover:text-orange-600";
-            } else {
+            } else if (view === 'anclas') {
                 anclasBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white text-orange-600 shadow-sm border border-orange-200";
-                slogansBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-500 hover:text-orange-600";
+            } else if (view === 'propuestas') {
+                propuestasBtn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-white text-orange-600 shadow-sm border border-orange-200";
             }
             renderWordCloud();
         }
@@ -585,7 +594,10 @@
         // Cargar el set de datos oficial de Procedimiento y Andenes
         function loadMockData() {
             const mockCSV = `Autor,Propuesta,Categoría,Fecha,Contenido Detallado,Tipo de Estrategia,Población Objetivo,Problemática,Tono
-Idea Propia: Procedimiento,Procedimiento,Procedimiento,2026-06-02,"=== OPCIONES GENERADAS DE INSPIRACIÓN ===
+Idea Propia: Procedimiento,Procedimiento,Procedimiento,2026-06-02,"IDEA PROPIA:
+Procedimiento básico
+
+=== OPCIONES GENERADAS DE INSPIRACIÓN ===
 Opción 1:
 Ancla: ⏱️🔥 Baja la Aguja, Brilla la Vida 💡
 Slogan: ""Calibra hoy para evitar celular y distracción digital en ruta en tu jornada; recuerda que la prevención de hoy es tu tranquilidad de mañana.""
@@ -597,7 +609,10 @@ Slogan: ""Monitorea hoy para evitar celular y distracción digital en ruta en tu
 Opción 3:
 Ancla: 👣🌟 Cruce Consciente, Paso Excelente 💡
 Slogan: ""Verifica hoy para evitar celular y distracción digital en ruta en tu jornada; recuerda que un hábito firme es tu mejor escudo protector.""",Preventiva,Conductores,Distracción por celular,Concientizador
-Idea Propia: Andenes,Andenes,Andenes,2026-06-02,"=== OPCIONES GENERADAS DE INSPIRACIÓN ===
+Idea Propia: Andenes,Andenes,Andenes,2026-06-02,"IDEA PROPIA:
+Andenes y accesos
+
+=== OPCIONES GENERADAS DE INSPIRACIÓN ===
 Opción 1:
 Ancla: 📱🧠 Pantalla Apagada, Vida Conectada 💡
 Slogan: ""Regresa hoy para evitar celular y distracción digital en ruta en tu jornada; recuerda que el camino seguro se construye paso a paso.""
@@ -608,7 +623,22 @@ Slogan: ""Ama hoy para evitar celular y distracción digital en ruta en tu jorna
 
 Opción 3:
 Ancla: 👣🌟 Cruce Consciente, Paso Excelente 💡
-Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en tu jornada; recuerda que un segundo de descuido destruye un futuro.""",Educativa,Peatones,Uso de celular,Alerta`;
+Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en tu jornada; recuerda que un segundo de descuido destruye un futuro.""",Educativa,Peatones,Uso de celular,Alerta
+Idea Propia: Mas socializacion,Mas socializacion,Socialización,2026-06-02,"IDEA PROPIA:
+Mas socializacion
+
+=== OPCIONES GENERADAS DE INSPIRACIÓN ===
+Opción 1:
+Ancla: 🧱 🧠 Pantalla Apagada, Vida Conectada 💡
+Slogan: ""Regresa hoy para evitar Elementos de Protección Personal (EPP) en tu jornada; recuerda que el camino seguro se construye paso a paso.""
+
+Opción 2:
+Ancla: 🧪 🔥 Baja la Aguja, Brilla la Vida 💡
+Slogan: ""Siente hoy para evitar Elementos de Protección Personal (EPP) en tu jornada; recuerda que la prevención de hoy es tu tranquilidad de mañana.""
+
+Opción 3:
+Ancla: ⚙️ 💚 Cuerpo Protegido, Mañana Cumplido 💡
+Slogan: ""Cuídate hoy para evitar Elementos de Protección Personal (EPP) en tu jornada; recuerda que el camino seguro se construye paso a paso.""",Preventiva,Peatones,Uso de EPP,Concientizador`;
 
             document.getElementById('raw-csv').value = mockCSV;
             parseAndProcessCSV(mockCSV);
@@ -644,33 +674,57 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
             });
         }
 
-        // Algoritmo de extracción de frases (Anclas y Slogans)
-        function extractPhrases(text) {
-            if (!text) return { anclas: [], slogans: [] };
+        // Algoritmo riguroso de extracción de datos del Contenido Detallado
+        function extractDetailedContent(text) {
+            if (!text) return { ideaPropia: "", anclas: [], slogans: [] };
             
             const anclas = [];
             const slogans = [];
+            let ideaPropia = "";
             
             const lines = text.split('\n');
-            lines.forEach(line => {
-                const cleanLine = line.trim();
-                if (cleanLine.startsWith('Ancla:')) {
-                    let val = cleanLine.substring(cleanLine.indexOf(':') + 1).trim();
+            let captureIdeaPropia = false;
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                
+                // Buscar encabezado de IDEA PROPIA
+                if (line.toUpperCase().startsWith('IDEA PROPIA:')) {
+                    captureIdeaPropia = true;
+                    const afterColon = line.substring(line.indexOf(':') + 1).trim();
+                    if (afterColon) {
+                        ideaPropia = afterColon;
+                        captureIdeaPropia = false; // ya extraída de la misma línea
+                    }
+                    continue;
+                }
+                
+                // Si la bandera está activa, extraer la siguiente línea válida
+                if (captureIdeaPropia) {
+                    if (line && !line.startsWith('===') && !line.toUpperCase().startsWith('OPCIÓN') && !line.startsWith('Ancla:') && !line.startsWith('Slogan:')) {
+                        ideaPropia = line;
+                        captureIdeaPropia = false; // captura finalizada
+                    }
+                    continue;
+                }
+
+                if (line.startsWith('Ancla:')) {
+                    let val = line.substring(line.indexOf(':') + 1).trim();
                     val = val.replace(/^["'«“](.*)["'»”]$/, '$1'); // Limpiar comillas
                     if (val) anclas.push(val);
-                } else if (cleanLine.startsWith('Slogan:')) {
-                    let val = cleanLine.substring(cleanLine.indexOf(':') + 1).trim();
+                } else if (line.startsWith('Slogan:')) {
+                    let val = line.substring(line.indexOf(':') + 1).trim();
                     val = val.replace(/^["'«“](.*)["'»”]$/, '$1'); // Limpiar comillas
                     if (val) slogans.push(val);
                 }
-            });
+            }
             
             // Fallback si no viene con etiquetas estructuradas
-            if (anclas.length === 0 && slogans.length === 0) {
+            if (anclas.length === 0 && slogans.length === 0 && !ideaPropia) {
                 slogans.push(text.trim());
             }
             
-            return { anclas, slogans };
+            return { ideaPropia, anclas, slogans };
         }
 
         // Normalizar los nombres de columnas de la hoja
@@ -680,11 +734,10 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
                 let Propuesta = row["Propuesta"] || row["propuesta"] || row["Frase"] || row["frase"] || row["Ancla"] || row["ancla"] || row["Título"] || row["titulo"];
                 let ContenidoDetallado = row["Contenido Detallado"] || row["Contenido detallado"] || row["contenido detallado"] || row["ContenidoDetallado"] || row["contenido_detallado"] || row["Slogan"] || row["slogan"] || row["Detalle"] || row["detalle"];
 
-                const { anclas, slogans } = extractPhrases(ContenidoDetallado);
+                const { ideaPropia, anclas, slogans } = extractDetailedContent(ContenidoDetallado);
 
-                if (Propuesta === "Procedimiento" || Propuesta === "Andenes" || !Propuesta) {
-                    Propuesta = (anclas.length > 0) ? anclas[0] : (slogans.length > 0 ? slogans[0].slice(0, 30) + '...' : "Propuesta #" + (idx + 1));
-                }
+                // La propuesta ahora se asigna directamente al texto limpio y preciso extraído debajo de "IDEA PROPIA"
+                let finalPropuesta = ideaPropia || Propuesta || "Propuesta #" + (idx + 1);
 
                 let Categoria = row["Categoría"] || row["categoria"] || row["Categoría"] || row["Categoria"] || row["Tag"] || row["tag"] || "General";
                 let Fecha = row["Fecha"] || row["fecha"] || row["Date"] || row["date"] || "2026-06-02";
@@ -698,7 +751,7 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
                 return {
                     Id: idx + 1,
                     Autor,
-                    Propuesta,
+                    Propuesta: finalPropuesta,
                     ContenidoDetallado,
                     ExtractedAnclas: anclas,
                     ExtractedSlogans: slogans,
@@ -747,8 +800,10 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
                 if (activeCloudWord !== "") {
                     if (cloudView === 'slogans') {
                         matchesCloudWord = item.ExtractedSlogans.includes(activeCloudWord);
-                    } else {
+                    } else if (cloudView === 'anclas') {
                         matchesCloudWord = item.ExtractedAnclas.includes(activeCloudWord);
+                    } else if (cloudView === 'propuestas') {
+                        matchesCloudWord = item.Propuesta === activeCloudWord;
                     }
                 }
 
@@ -767,7 +822,7 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
             }
         }
 
-        // Generar Nube de Frases Completas
+        // Generar Nube de Frases Completas (Consolidada y Sin Duplicados)
         function renderWordCloud() {
             const cloudContainer = document.getElementById('word-cloud-box');
             cloudContainer.innerHTML = '';
@@ -784,9 +839,19 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
                 return;
             }
 
+            // Mapeo unificado sin duplicados gracias al objeto de conteo 'phraseCounts'
             const phraseCounts = {};
             filteredData.forEach(item => {
-                const list = cloudView === 'slogans' ? item.ExtractedSlogans : item.ExtractedAnclas;
+                let list = [];
+                if (cloudView === 'slogans') {
+                    list = item.ExtractedSlogans;
+                } else if (cloudView === 'anclas') {
+                    list = item.ExtractedAnclas;
+                } else if (cloudView === 'propuestas') {
+                    // Propuestas propias extraídas directamente del texto descriptivo
+                    list = [item.Propuesta];
+                }
+
                 list.forEach(phrase => {
                     if (phrase && phrase.trim() !== "") {
                         const trimmed = phrase.trim();
@@ -809,11 +874,12 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
                 return;
             }
 
+            // Colores vibrantes de alto contraste para interfaz clara
             const vibrantOrangeBorders = [
-                'hover:border-orange-500 hover:bg-orange-50 text-slate-800 border-orange-100',
-                'hover:border-amber-500 hover:bg-amber-50/50 text-slate-800 border-orange-100',
-                'hover:border-red-500 hover:bg-red-50/50 text-slate-800 border-orange-100',
-                'hover:border-yellow-500 hover:bg-yellow-50/50 text-slate-800 border-orange-100'
+                'hover:border-orange-600 hover:bg-orange-100 text-slate-900 border-orange-200',
+                'hover:border-amber-600 hover:bg-amber-100 text-slate-900 border-orange-200',
+                'hover:border-red-600 hover:bg-red-100 text-slate-900 border-orange-200',
+                'hover:border-yellow-600 hover:bg-yellow-100 text-slate-900 border-orange-200'
             ];
 
             uniquePhrases.forEach((phraseObj, index) => {
@@ -824,12 +890,15 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
                 phraseButton.className = `phrase-item w-full text-left p-3 rounded-xl border bg-white transition-all focus:outline-none flex items-start gap-3 shadow-sm`;
                 
                 if (isSelected) {
-                    phraseButton.className += ` border-orange-600 bg-orange-50 shadow-md scale-[1.01]`;
+                    phraseButton.className += ` border-orange-600 bg-orange-100/80 shadow-md scale-[1.01] font-bold`;
                 } else {
                     phraseButton.className += ` ${borderTheme}`;
                 }
 
-                const icon = cloudView === 'slogans' ? 'quote' : 'anchor';
+                // Asignación de icono basado en el tipo de consolidado
+                let icon = 'quote';
+                if (cloudView === 'anclas') icon = 'anchor';
+                if (cloudView === 'propuestas') icon = 'user';
 
                 phraseButton.innerHTML = `
                     <div class="p-1.5 rounded-lg bg-orange-50 text-orange-600 mt-0.5 shrink-0 border border-orange-100">
@@ -861,7 +930,7 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
                 filterIndicator.classList.remove('hidden');
                 filterIndicator.classList.add('flex');
                 
-                showToast(`Mostrando propuestas asociadas a la frase seleccionada`, "info");
+                showToast("Mostrando propuestas asociadas a la frase seleccionada", "info");
                 applyFilters();
             }
         }
@@ -932,6 +1001,12 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
                         <div class="flex items-center justify-between gap-2">
                             <span class="text-[9px] ${categoryColor} px-2.5 py-1 rounded-full border font-bold uppercase tracking-wider">${item.Categoria}</span>
                             <span class="text-[9px] ${badgeColor} px-2.5 py-1 rounded-full border font-bold uppercase tracking-wider">${impactBadge}</span>
+                        </div>
+
+                        <!-- Propuesta Propia (Concepto) -->
+                        <div class="space-y-1">
+                            <span class="text-[9px] text-slate-400 uppercase tracking-widest font-mono font-bold block">Idea Propia (Concepto)</span>
+                            <h3 class="text-xs font-syne font-bold text-orange-600 group-hover:text-orange-500 transition-all flex items-center gap-1.5">${item.Propuesta}</h3>
                         </div>
 
                         <!-- Propuestas Extraídas -->
@@ -1166,8 +1241,16 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
                 Los slogans registran un largo medio de <strong>${avgWords} palabras</strong>, logrando un balance ideal entre asimilación y recordación ágil.
             `;
 
-            // Paleta de colores naranjas muy vibrantes
-            const vibrantOrangePalette = ['#ff5100', '#ff781f', '#f97316', '#fb923c', '#fdba74', '#c2410c', '#ea580c'];
+            // Paleta de colores naranja de alto contraste y ultra vibrante
+            const highContrastPalette = [
+                '#FF4500', // Rojo naranja puro (Vibrante)
+                '#E65100', // Naranja sumamente oscuro de alto contraste
+                '#FF6D00', // Naranja eléctrico / neón
+                '#DD2C00', // Rojo bermellón profundo
+                '#F57C00', // Ámbar de gran intensidad
+                '#BF360C', // Terracota para contraste máximo
+                '#FF8F00'  // Ámbar oscuro
+            ];
 
             // Gráfico 1: Tipo de Estrategia
             if (strategyChartInstance) strategyChartInstance.destroy();
@@ -1178,8 +1261,8 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
                     labels: Object.keys(strategyCounts),
                     datasets: [{
                         data: Object.values(strategyCounts),
-                        backgroundColor: vibrantOrangePalette.slice(0, Object.keys(strategyCounts).length),
-                        borderWidth: 2,
+                        backgroundColor: highContrastPalette.slice(0, Object.keys(strategyCounts).length),
+                        borderWidth: 2.5,
                         borderColor: '#ffffff'
                     }]
                 },
@@ -1189,7 +1272,7 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
                     plugins: {
                         legend: {
                             position: 'bottom',
-                            labels: { font: { family: 'Plus Jakarta Sans', size: 10, weight: 'bold' }, color: '#475569' }
+                            labels: { font: { family: 'Plus Jakarta Sans', size: 10, weight: 'bold' }, color: '#1e293b' }
                         }
                     }
                 }
@@ -1205,7 +1288,7 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
                     datasets: [{
                         label: 'Número de Campañas',
                         data: Object.values(targetCounts),
-                        backgroundColor: '#ff5100',
+                        backgroundColor: '#FF4500', // Ultra-vibrante
                         borderRadius: 6
                     }]
                 },
@@ -1214,8 +1297,8 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        x: { grid: { display: false }, ticks: { color: '#64748b', font: { family: 'Plus Jakarta Sans', size: 10, weight: 'bold' } } },
-                        y: { grid: { color: '#f1f5f9' }, ticks: { color: '#64748b', font: { family: 'Plus Jakarta Sans', size: 9 } } }
+                        x: { grid: { display: false }, ticks: { color: '#1e293b', font: { family: 'Plus Jakarta Sans', size: 10, weight: 'bold' } } },
+                        y: { grid: { color: '#f1f5f9' }, ticks: { color: '#475569', font: { family: 'Plus Jakarta Sans', size: 9 } } }
                     }
                 }
             });
@@ -1230,7 +1313,7 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
                     datasets: [{
                         label: 'Incidencias',
                         data: Object.values(problemCounts),
-                        backgroundColor: '#f97316',
+                        backgroundColor: '#E65100', // Contraste oscuro
                         borderRadius: 6
                     }]
                 },
@@ -1240,8 +1323,8 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
                     maintainAspectRatio: false,
                     plugins: { legend: { display: false } },
                     scales: {
-                        x: { grid: { display: false }, ticks: { color: '#64748b', font: { family: 'Plus Jakarta Sans', size: 9 } } },
-                        y: { grid: { display: false }, ticks: { color: '#1e293b', font: { family: 'Plus Jakarta Sans', size: 9, weight: 'bold' } } }
+                        x: { grid: { display: false }, ticks: { color: '#475569', font: { family: 'Plus Jakarta Sans', size: 9 } } },
+                        y: { grid: { display: false }, ticks: { color: '#0f172a', font: { family: 'Plus Jakarta Sans', size: 9, weight: 'bold' } } }
                     }
                 }
             });
@@ -1255,7 +1338,7 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
                     labels: Object.keys(toneCounts),
                     datasets: [{
                         data: Object.values(toneCounts),
-                        backgroundColor: vibrantOrangePalette.slice(1, Object.keys(toneCounts).length + 1),
+                        backgroundColor: highContrastPalette.slice(2, Object.keys(toneCounts).length + 2),
                         borderWidth: 1.5,
                         borderColor: '#ffffff'
                     }]
@@ -1266,7 +1349,7 @@ Slogan: ""Protégelos hoy para evitar celular y distracción digital en ruta en 
                     plugins: {
                         legend: {
                             position: 'bottom',
-                            labels: { font: { family: 'Plus Jakarta Sans', size: 10, weight: 'bold' }, color: '#475569' }
+                            labels: { font: { family: 'Plus Jakarta Sans', size: 10, weight: 'bold' }, color: '#1e293b' }
                         }
                     }
                 }
